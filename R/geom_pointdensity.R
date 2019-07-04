@@ -2,10 +2,13 @@
 
 
 count_neighbors_r <- function( x, y, r2, xy, yx) {
-   sapply( 1:length(x), function(i)
-   sum( (yx*(x[i]-x)^2) + (xy*(y[i]-y)^2) < r2 ) )
+  sapply( 1:length(x), function(i)
+  sum( (yx*(x[i]-x)^2) + (xy*(y[i]-y)^2) < r2 ) )
 }
 
+count_neighbors <- function(x, y, r2, xy, yx) {
+  .Call("count_neighbors_", x, y, r2, xy, yx, "ggpointdensity")
+}
 
 #' @export
 stat_pointdensity <- function(mapping = NULL, data = NULL,
@@ -45,36 +48,8 @@ StatPointdensity <- ggproto("StatPointdensity", Stat,
 
                               r2 <- (xrange + yrange) / 70
 
-                              count_neighbors_c <- inline::cfunction(
-                                signature( x="numeric", y="numeric", r2="numeric",
-                                           xy="numeric", yx="numeric" ), '
-        double r2p = REAL(r2)[0];
-        double xyp = REAL(xy)[0];
-        double yxp = REAL(yx)[0];
-        int l = Rf_length(x);
-        if( Rf_length(y) != l )
-           error( "Vectors x and y differ in length." );
-        SEXP res = Rf_allocVector( INTSXP, l );
-        int *resp = INTEGER(res);
-        double *xp = REAL(x);
-        double *yp = REAL(y);
-        for( int i = 0; i < l; i++ ) {
-           int s = 0;
-           double xi = xp[i];
-           double yi = yp[i];
-           for( int j = 0; j < l; j++ ) {
-              double dx = xi - xp[j];
-              double dy = yi - yp[j];
-              if( yxp*dx*dx + xyp*dy*dy <= r2p )
-                 s++;
-           }
-           resp[i] = s;
-        }
-        return res;
-    ')
-
-                              neigh <- count_neighbors_c(data$x, data$y, r2 = r2,
-                                                         xy = xy, yx = yx)
+                              neigh <- count_neighbors(data$x, data$y, r2 = r2,
+                                                       xy = xy, yx = yx)
                               out <- data.frame(x = data$x,
                                                 y = data$y,
                                                 n_neighbors = neigh)

@@ -67,10 +67,10 @@ dat %>%
 <img src="img/pointdensity_adj.png" width="100%" />
 
 Of course you can combine the geom with standard `ggplot2` features
-such as point shape, point size and facets:
+such as facets:
+
 ``` r
-
-
+# Facetting by group
 dat %>%
   ggplot(aes(x = x, y = y)) +
   geom_pointdensity() +
@@ -78,13 +78,23 @@ dat %>%
   facet_wrap( ~ group)
 ```
 
-<img src="img/pointdensity_shape.png" width="50%" />
-
 <img src="img/pointdensity_facet.png" width="100%" />
 
-Zooming into the axis works as well, Keep in mind that `xlim()` and
-`ylim()` change the density since data outside of the axis limits is
-removed. It may be better to use `coord_cartesian()` instead.
+```{r}
+# Changing point shape and size
+dat %>%
+  sample_frac(.1) %>%
+  ggplot(aes(x = x, y = y)) +
+  geom_pointdensity(size = 3, shape = 17) +
+  scale_color_viridis()
+```
+
+<img src="img/pointdensity_shape.png" width="50%" />
+
+Zooming into the axis works as well, keep in mind that `xlim()` and
+`ylim()` change the density since it removes data points.
+It may be better to use `coord_cartesian()` instead.
+
 ``` r
 dat %>%
   ggplot(aes(x = x, y = y)) +

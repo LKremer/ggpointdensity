@@ -1,0 +1,167 @@
+---
+title: "R Notebook"
+output:
+  html_document:
+    df_print: paged
+editor_options:
+  chunk_output_type: inline
+---
+
+```{r}
+# devtools::install_github("LKremer/ggpointdensity")
+```
+
+
+```{r}
+library(tidyverse)
+library(viridis)
+library(ggpointdensity)
+library(patchwork)
+theme_set(theme_minimal())
+```
+
+Generate some toy data:
+```{r}
+dat <- bind_rows(
+  tibble(x = rnorm(7000, sd = 1),
+         y = rnorm(7000, sd = 10),
+         group = "foo"),
+  tibble(x = rnorm(3000, mean = 1, sd = .5),
+         y = rnorm(3000, mean = 7, sd = 5),
+         group = "bar"))
+
+dat %>%
+  ggplot( aes( x = x, y = y, color = group)) +
+  geom_point( size = .5)
+```
+
+```{r}
+pp <- dat %>%
+  ggplot( aes( x = x, y = y)) +
+  geom_point( size = .3) +
+  labs(title="geom_point()") + theme(plot.title = element_text(hjust = 0.5))
+
+pd <- dat %>%
+  ggplot( aes( x = x, y = y, fill = stat(level))) +
+  stat_density_2d(geom = "polygon") +
+  scale_fill_viridis() +
+  labs(title="stat_density2d(geom='polygon')") + theme(plot.title = element_text(hjust = 0.5))
+
+pb <- dat %>%
+  ggplot( aes( x = x, y = y)) +
+  geom_bin2d() +
+  scale_fill_viridis() +
+  labs(title="geom_bin2d()") + theme(plot.title = element_text(hjust = 0.5))
+
+pp + pd + pb
+
+ggsave("/home/lukas/code/ggpointdensity/img/scatter_dens_bin2d.png",
+       width = 22, height = 6, units = "cm", dpi = 300)
+```
+
+
+Use the geom:
+```{r}
+dat %>%
+  ggplot(aes(x = x, y = y)) +
+  geom_pointdensity(size = .3) +
+  scale_color_viridis() +
+  labs(title="geom_pointdensity()") + theme(plot.title = element_text(hjust = 0.5))
+
+ggsave("/home/lukas/code/ggpointdensity/img/pointdensity.png",
+       width = 10, height = 7, units = "cm", dpi = 300)
+```
+
+The "adjust" argument can be used to adjust the smoothing bandwidth (just as in ggplot2::stat_density):
+```{r}
+adj1 <- dat %>%
+  ggplot(aes(x = x, y = y)) +
+  geom_pointdensity(size = .3, adjust = .1) +
+  scale_color_viridis() +
+  labs(title="adjust = 0.1") + theme(plot.title = element_text(hjust = 0.5))
+
+adj2 <- dat %>%
+  ggplot(aes(x = x, y = y)) +
+  geom_pointdensity(size = .3, adjust = 4) +
+  scale_color_viridis() +
+  labs(title="adjust = 4") + theme(plot.title = element_text(hjust = 0.5))
+
+
+adj1 + adj2
+ggsave("/home/lukas/code/ggpointdensity/img/pointdensity_adj.png",
+       width = 18, height = 6, units = "cm", dpi = 300)
+```
+
+Not sure why anyone would do this, but you can use separate bandwidths for x and y:
+```{r}
+dat %>%
+  ggplot(aes(x = x, y = y)) +
+  geom_pointdensity(size = .3, adjust = c(0.1, 2)) +
+  scale_color_viridis() +
+  labs(title="adjust = c(0.1, 2)") + theme(plot.title = element_text(hjust = 0.5))
+
+ggsave("/home/lukas/code/ggpointdensity/img/pointdensity_xyadj.png",
+       width = 10, height = 7, units = "cm", dpi = 300)
+```
+
+Facetting works fine:
+```{r}
+dat %>%
+  ggplot( aes( x = x, y = y)) +
+  geom_pointdensity( size = .25) +
+  scale_color_viridis() +
+  facet_wrap( ~ group) +
+  labs(title="facet_wrap( ~ group)") + theme(plot.title = element_text(hjust = 0.5))
+
+ggsave("/home/lukas/code/ggpointdensity/img/pointdensity_facet.png",
+       width = 14, height = 7, units = "cm", dpi = 300)
+```
+
+x- and ylim work as expected:
+```{r}
+plim <- dat %>%
+  ggplot(aes(x = x, y = y)) +
+  geom_pointdensity(size = .5) +
+  scale_color_viridis() +
+  scale_x_continuous(limits = c(-1, 3)) +
+  scale_y_continuous(limits = c(-5, 15)) +
+  labs(title="using x- and ylim()") + theme(plot.title = element_text(hjust = 0.5))
+```
+
+coord_cartesian also works:
+```{r}
+pcc <- dat %>%
+  ggplot(aes(x = x, y = y)) +
+  geom_pointdensity(size = .5) +
+  scale_color_viridis() +
+  coord_cartesian(xlim = c(-1, 3), ylim = c(-5, 15)) +
+  labs(title="using coord_cartesian()") + theme(plot.title = element_text(hjust = 0.5))
+```
+
+```{r}
+plim + pcc
+ggsave("/home/lukas/code/ggpointdensity/img/pointdensity_zoom.png",
+       width = 18, height = 6, units = "cm", dpi = 300)
+```
+
+
+All functions of geom_point should work too:
+```{r}
+dat %>% sample_frac(.1) %>%
+  ggplot(aes(x = x, y = y)) +
+  geom_pointdensity(size = 3, shape = 17) +
+  scale_color_viridis() +
+  labs(title="changing shape") + theme(plot.title = element_text(hjust = 0.5))
+
+ggsave("/home/lukas/code/ggpointdensity/img/pointdensity_shape.png",
+       width = 10, height = 7, units = "cm", dpi = 300)
+```
+
+
+
+
+
+```{r}
+date()
+```
+

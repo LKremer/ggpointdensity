@@ -2,10 +2,10 @@
 #include <Rdefines.h>
 #include <R_ext/Error.h>
 
-SEXP count_neighbors_( SEXP x, SEXP y, SEXP r2, SEXP xy, SEXP yx ) {
+SEXP count_neighbors_( SEXP x, SEXP y, SEXP r2, SEXP xy ) {
   double r2p = REAL(r2)[0];
   double xyp = REAL(xy)[0];
-  double yxp = REAL(yx)[0];
+  double yxp = 1.0 / xyp;
   int l = Rf_length(x);
   if( Rf_length(y) != l )
     error( "Vectors x and y differ in length." );

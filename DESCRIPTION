@@ -1,14 +1,13 @@
 Package: ggpointdensity
 Type: Package
-Title: What the Package Does (Title Case)
+Title: ggpointdensity: a scatter plot, colored by point density.
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Author: Lukas P.M. Kremer, Simon Anders
+Maintainer: Lukas P.M. Kremer <l.kremer@dkfz.de>
+Description: A fusion between a 2D density plot and a scatter plot,
+    implemented as a ggplot2 geom.
+License: MIT License
 Encoding: UTF-8
 LazyData: true
 Imports:
-  ggplot2,
-  inline
+  ggplot2

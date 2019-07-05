@@ -1,10 +1,11 @@
 # ggpointdensity
 Introduces `geom_pointdensity()`: A cross between a scatter plot and a 2D density plot.
 
-<img src="img/pointdensity.png" width="100%" />
+<img src="img/pointdensity_logo.png" width="60%" />
 
 
 ## Installation
+To install the package, paste this code into R:
 ``` r
 if (!requireNamespace("devtools", quietly = TRUE))
     install.packages("devtools")
@@ -78,7 +79,7 @@ dat %>%
   facet_wrap( ~ group)
 ```
 
-<img src="img/pointdensity_facet.png" width="100%" />
+<img src="img/pointdensity_facet.png" width="75%" />
 
 ``` r
 # Changing point shape and size

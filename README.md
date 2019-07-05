@@ -21,8 +21,8 @@ to investigate individual outlier points, which may be of interest.
 <img src="img/scatter_dens_bin2d.png" width="100%" />
 
 `geom_pointdensity()` aims to solve this problem by combining the best of both
-worlds: individual points are colored by the number of neighboring points,
-which is useful to see the overall distribution.
+worlds: individual points are colored by the number of neighboring points.
+This allows you to see the overall distribution, as well as individual points.
 
 <img src="img/pointdensity.png" width="50%" />
 

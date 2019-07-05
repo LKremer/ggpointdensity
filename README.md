@@ -80,7 +80,7 @@ dat %>%
 
 <img src="img/pointdensity_facet.png" width="100%" />
 
-```{r}
+``` r
 # Changing point shape and size
 dat %>%
   sample_frac(.1) %>%

@@ -1,13 +1,16 @@
 #' @import ggplot2
 
 
-count_neighbors_r <- function( x, y, r2, xy, yx) {
-  sapply( 1:length(x), function(i)
-  sum( (yx*(x[i]-x)^2) + (xy*(y[i]-y)^2) < r2 ) )
-}
-
 count_neighbors <- function(x, y, r2, xy) {
   .Call("count_neighbors_", x, y, r2, xy, "ggpointdensity")
+}
+
+#' Implementation of count_neighbors in R. Not actually used, just for clarity
+count_neighbors_r <- function(x, y, r2, xy) {
+  yx <- 1 / xy
+  sapply(1:length(x), function(i) {
+    sum((yx * (x[i] - x) ^ 2) + (xy * (y[i] - y) ^ 2) < r2)
+  })
 }
 
 #' @export
@@ -54,11 +57,10 @@ StatPointdensity <- ggproto("StatPointdensity", Stat,
 
                               # counting the number of neighbors around each point,
                               # this will be used to color the points
-                              neigh <- count_neighbors(data$x, data$y, r2 = r2, xy = xy)
+                              data$n_neighbors <- count_neighbors(
+                                data$x, data$y, r2 = r2, xy = xy)
 
-                              out <- data.frame(x = data$x, y = data$y, n_neighbors = neigh)
-
-                              out
+                              data
                             }
 )
 
@@ -72,11 +74,11 @@ geom_pointdensity <- function(mapping = NULL,
                               show.legend = NA,
                               inherit.aes = TRUE) {
 
-  layer(
+  ggplot2::layer(
     data = data,
     mapping = mapping,
     stat = stat,
-    geom = GeomPoint,
+    geom = ggplot2::GeomPoint,
     position = position,
     show.legend = show.legend,
     inherit.aes = inherit.aes,

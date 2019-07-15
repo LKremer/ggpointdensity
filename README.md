@@ -112,5 +112,8 @@ dat %>%
 
 <img src="img/pointdensity_zoom.png" width="100%" />
 
+## Known problems
+There is currently no documentation apart from this readme, sorry!
+
 ## Authors
 Lukas Kremer and Simon Anders

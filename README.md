@@ -93,7 +93,7 @@ dat %>%
 <img src="img/pointdensity_shape.png" width="50%" />
 
 Zooming into the axis works as well, keep in mind that `xlim()` and
-`ylim()` change the density since it removes data points.
+`ylim()` change the density since they remove data points.
 It may be better to use `coord_cartesian()` instead.
 
 ``` r
@@ -116,4 +116,4 @@ dat %>%
 There is currently no documentation apart from this readme, sorry!
 
 ## Authors
-Lukas Kremer and Simon Anders
+Lukas Kremer and Simon Anders (2019)

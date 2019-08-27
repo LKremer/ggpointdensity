@@ -30,7 +30,8 @@ This allows you to see the overall distribution, as well as individual points.
 ## Demo
 Generate some toy data and visualize it with `geom_pointdensity()`:
 ``` r
-library(tidyverse)
+library(ggplot2)
+library(dplyr)
 library(viridis)
 library(ggpointdensity)
 

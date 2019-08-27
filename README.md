@@ -42,8 +42,7 @@ dat <- bind_rows(
          y = rnorm(3000, mean = 7, sd = 5),
          group = "bar"))
 
-dat %>%
-  ggplot(aes(x = x, y = y)) +
+ggplot(data = dat, mapping = aes(x = x, y = y)) +
   geom_pointdensity() +
   scale_color_viridis()
 ```
@@ -55,25 +54,22 @@ The distance threshold to consider two points as neighbors (smoothing
 bandwidth) can be adjusted with the `adjust` argument, where `adjust = 0.5`
 means use half of the default bandwidth.
 ``` r
-dat %>%
-  ggplot(aes(x = x, y = y)) +
+ggplot(data = dat, mapping = aes(x = x, y = y)) +
   geom_pointdensity(adjust = .1) +
   scale_color_viridis()
  
-dat %>%
-  ggplot(aes(x = x, y = y)) +
+ggplot(data = dat, mapping = aes(x = x, y = y)) +
   geom_pointdensity(adjust = 4) +
   scale_color_viridis()
 ```
 <img src="img/pointdensity_adj.png" width="100%" />
 
 Of course you can combine the geom with standard `ggplot2` features
-such as facets:
+such as facets...
 
 ``` r
 # Facetting by group
-dat %>%
-  ggplot(aes(x = x, y = y)) +
+ggplot(data = dat, mapping = aes(x = x, y = y)) +
   geom_pointdensity() +
   scale_color_viridis() +
   facet_wrap( ~ group)
@@ -81,11 +77,10 @@ dat %>%
 
 <img src="img/pointdensity_facet.png" width="75%" />
 
+... or point shape and size:
 ``` r
-# Changing point shape and size
-dat %>%
-  sample_frac(.1) %>%
-  ggplot(aes(x = x, y = y)) +
+dat_subset <- sample_frac(dat, .1)  # smaller data set
+ggplot(data = dat_subset, mapping = aes(x = x, y = y)) +
   geom_pointdensity(size = 3, shape = 17) +
   scale_color_viridis()
 ```
@@ -97,23 +92,18 @@ Zooming into the axis works as well, keep in mind that `xlim()` and
 It may be better to use `coord_cartesian()` instead.
 
 ``` r
-dat %>%
-  ggplot(aes(x = x, y = y)) +
+ggplot(data = dat, mapping = aes(x = x, y = y)) +
   geom_pointdensity() +
   scale_color_viridis() +
   xlim(c(-1, 3)) + ylim(c(-5, 15))
 
-dat %>%
-  ggplot(aes(x = x, y = y)) +
+ggplot(data = dat, mapping = aes(x = x, y = y)) +
   geom_pointdensity() +
   scale_color_viridis() +
   coord_cartesian(xlim = c(-1, 3), ylim = c(-5, 15))
 ```
 
 <img src="img/pointdensity_zoom.png" width="100%" />
-
-## Known problems
-There is currently no documentation apart from this readme, sorry!
 
 ## Authors
 Lukas Kremer and Simon Anders (2019)

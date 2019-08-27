@@ -8,10 +8,13 @@ Description: A cross between a 2D density plot and a scatter plot,
     implemented as a ggplot2 geom. Points in the scatterplot are 
     colored by the number of neighboring points. This is useful to
     visualize the 2D-distribution of points in case of overplotting.
-License: MIT License
+License: GPL-3 | file LICENSE
 Encoding: UTF-8
 LazyData: true
+Depends:
+  R (>= 3.2)
 Imports:
   ggplot2
 Suggests:
-  viridis
+  viridis,
+  dplyr

@@ -1,6 +1,6 @@
 Package: ggpointdensity
 Type: Package
-Title: ggpointdensity: A cross between a 2D density plot and a scatter plot.
+Title: ggpointdensity: A cross between a 2D density plot and a scatter plot
 Version: 0.1.0
 Author: Lukas P.M. Kremer, Simon Anders
 Maintainer: Lukas P.M. Kremer <L-Kremer@web.de>

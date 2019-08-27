@@ -1,13 +1,17 @@
 Package: ggpointdensity
 Type: Package
-Title: ggpointdensity: a scatter plot, colored by point density.
+Title: ggpointdensity: A cross between a 2D density plot and a scatter plot.
 Version: 0.1.0
 Author: Lukas P.M. Kremer, Simon Anders
-Maintainer: Lukas P.M. Kremer <l.kremer@dkfz.de>
-Description: A fusion between a 2D density plot and a scatter plot,
-    implemented as a ggplot2 geom.
+Maintainer: Lukas P.M. Kremer <L-Kremer@web.de>
+Description: A cross between a 2D density plot and a scatter plot,
+    implemented as a ggplot2 geom. Points in the scatterplot are 
+    colored by the number of neighboring points. This is useful to
+    visualize the 2D-distribution of points in case of overplotting.
 License: MIT License
 Encoding: UTF-8
 LazyData: true
 Imports:
   ggplot2
+Suggests:
+  viridis

@@ -72,6 +72,21 @@ ggsave("/home/lukas/code/ggpointdensity/img/pointdensity.png",
        width = 10, height = 7, units = "cm", dpi = 300)
 ```
 
+```{r}
+dat %>%
+  ggplot(aes(x = x, y = y)) +
+  geom_pointdensity(size = .3) +
+  scale_color_viridis() +
+  labs(title="geom_pointdensity()") +
+  theme_void() +
+  theme(plot.title = element_text(hjust = 0.5),
+        legend.position = "none")
+
+ggsave("/home/lukas/code/ggpointdensity/img/pointdensity_logo.png",
+       width = 7, height = 8, units = "cm", dpi = 300)
+```
+
+
 The "adjust" argument can be used to adjust the smoothing bandwidth (just as in ggplot2::stat_density):
 ```{r}
 adj1 <- dat %>%

@@ -5,7 +5,12 @@ Introduces `geom_pointdensity()`: A cross between a scatter plot and a 2D densit
 
 
 ## Installation
-To install the package, paste this code into R:
+To install the package from R, use:
+``` r
+install.packages("ggpointdensity")
+```
+
+Alternatively, you can install the development version from GitHub:
 ``` r
 if (!requireNamespace("devtools", quietly = TRUE))
     install.packages("devtools")

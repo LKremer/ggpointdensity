@@ -2,6 +2,11 @@
 #include <Rdefines.h>
 #include <R_ext/Error.h>
 
+void R_init_ggpointdensity(DllInfo* info) {
+  R_registerRoutines(info, NULL, NULL, NULL, NULL);
+  R_useDynamicSymbols(info, TRUE);
+}
+
 SEXP count_neighbors_( SEXP x, SEXP y, SEXP r2, SEXP xy ) {
   double r2p = REAL(r2)[0];
   double xyp = REAL(xy)[0];

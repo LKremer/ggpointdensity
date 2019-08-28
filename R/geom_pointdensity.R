@@ -13,7 +13,6 @@ count_neighbors_r <- function(x, y, r2, xy) {
   })
 }
 
-#' @export
 stat_pointdensity <- function(mapping = NULL,
                               data = NULL,
                               geom = "point",
@@ -64,7 +63,6 @@ StatPointdensity <- ggproto("StatPointdensity", Stat,
                             }
 )
 
-#' @export
 geom_pointdensity <- function(mapping = NULL,
                               data = NULL,
                               stat = "pointdensity",

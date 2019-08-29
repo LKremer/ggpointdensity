@@ -1,17 +1,17 @@
 # ggpointdensity
+[![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/ggpointdensity)](https://cran.r-project.org/package=ggpointdensity) 
 Introduces `geom_pointdensity()`: A cross between a scatter plot and a 2D density plot.
 
 <img src="img/pointdensity_logo.png" width="60%" />
 
 
 ## Installation
-To install the package from R, use:
+To install the package, type this command in R:
 ``` r
 install.packages("ggpointdensity")
-```
 
-Alternatively, you can install the development version from GitHub:
-``` r
+# Alternatively, you can install the latest
+# development version from GitHub:
 if (!requireNamespace("devtools", quietly = TRUE))
     install.packages("devtools")
 devtools::install_github("LKremer/ggpointdensity")

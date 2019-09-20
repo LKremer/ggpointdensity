@@ -34,6 +34,15 @@ This allows you to see the overall distribution, as well as individual points.
 
 <img src="img/pointdensity.png" width="50%" />
 
+## Changelog
+Added `method` argument and renamed the `n_neighbor` stat to `density`. The available options
+are `method="auto"`,
+`method="default"` and `method="kde2d"`. `default` is the regular n_neighbor calculation
+as in the CRAN package. `kde2d` uses 2D kernel density estimation to estimate the point density
+(credits to @slowkow).
+This method is slower for few points, but faster for many (ca. >20k) points. By default,
+`method="auto"` picks either `kde2d` or `default` depending on the number of points.
+
 ## Demo
 Generate some toy data and visualize it with `geom_pointdensity()`:
 ``` r
@@ -58,6 +67,8 @@ ggplot(data = dat, mapping = aes(x = x, y = y)) +
 <img src="img/pointdensity.png" width="50%" />
 
 Each point is colored according to the number of neighboring points.
+(Note: this here is the dev branch, where I decided to plot the density estimate
+instead of n_neighbors now.)
 The distance threshold to consider two points as neighbors (smoothing
 bandwidth) can be adjusted with the `adjust` argument, where `adjust = 0.5`
 means use half of the default bandwidth.

@@ -99,6 +99,10 @@ ggplot(data = dat, mapping = aes(x = x, y = y)) +
 ggplot(data = dat, mapping = aes(x = x, y = y)) +
   geom_pointdensity(adjust = 4)
 
+ggplot(data = dat, mapping = aes(x = x, y = y)) +
+  geom_pointdensity(adjust = 4) +
+  scale_colour_continuous(low = "red", high = "black")
+
 # I recommend the viridis package
 # for a more useful color scale
 library(viridis)

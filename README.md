@@ -125,4 +125,4 @@ ggplot(data = dat, mapping = aes(x = x, y = y)) +
 <img src="img/pointdensity_zoom.png" width="100%" />
 
 ## Authors
-Lukas Kremer and Simon Anders (2019)
+Lukas PM Kremer ([@LPMKremer](https://twitter.com/LPMKremer/)) and Simon Anders ([@s_anders_m](https://twitter.com/s_anders_m/)), 2019

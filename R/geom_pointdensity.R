@@ -81,6 +81,7 @@ StatPointdensity <- ggproto("StatPointdensity", Stat,
                                 # this will be used to color the points
                                 data$density <- count_neighbors(
                                   data$x, data$y, r2 = r2, xy = xy)
+                                data$ndensity <- data$density/max(data$density)
 
                               } else if (identical(method, "kde2d")) {
 
@@ -102,6 +103,8 @@ StatPointdensity <- ggproto("StatPointdensity", Stat,
                                 iy <- findInterval(data$y, dens$y)
                                 ii <- cbind(ix, iy)
                                 data$density <- dens$z[ii]
+                                data$ndensity <- dens$z[ii]/max(dens$z[ii])
+
 
                               } else {
 
@@ -109,6 +112,8 @@ StatPointdensity <- ggproto("StatPointdensity", Stat,
                                   method <- match.fun(method)
                                 }
                                 data$density <- do.call(method, c(method.args))
+                                data$ndensity <- data$density/max(data$density)
+
                               }
 
                               data

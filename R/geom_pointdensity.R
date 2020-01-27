@@ -82,6 +82,7 @@ StatPointdensity <- ggproto("StatPointdensity", Stat,
                                 data$density <- count_neighbors(
                                   data$x, data$y, r2 = r2, xy = xy)
 
+
                               } else if (identical(method, "kde2d")) {
 
                                 base.args <- list(
@@ -109,7 +110,11 @@ StatPointdensity <- ggproto("StatPointdensity", Stat,
                                   method <- match.fun(method)
                                 }
                                 data$density <- do.call(method, c(method.args))
+
                               }
+
+
+                              data$ndensity <- data$density/max(data$density)
 
                               data
                             }

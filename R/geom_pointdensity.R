@@ -119,15 +119,17 @@ StatPointdensity <- ggproto("StatPointdensity", Stat,
 
                               } else if (identical(method, "kde2d")) {
 
+                                finites <- is.finite(data$x) & is.finite(data$y)
+                                ddata <- data[finites,]
                                 base.args <- list(
-                                  x = data$x,
-                                  y = data$y,
+                                  x = ddata$x,
+                                  y = ddata$y,
                                   lims = c(scales$x$dimension(), scales$y$dimension()))
                                 if (!is.element("n", names(method.args))) {
                                   method.args["n"] <- 100
                                 }
                                 if (!is.element("h", names(method.args))) {
-                                  h <- c(MASS::bandwidth.nrd(data$x), MASS::bandwidth.nrd(data$y))
+                                  h <- c(MASS::bandwidth.nrd(ddata$x), MASS::bandwidth.nrd(ddata$y))
                                   method.args$h <- h * adjust
                                 }
 

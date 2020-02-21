@@ -46,6 +46,40 @@ StatPointdensity <- ggproto("StatPointdensity", Stat,
                             default_aes = aes(color = stat(density)),
                             required_aes = c("x", "y"),
 
+                            compute_layer = function(self, data, params, layout) {
+                              # This function mostly copied from ggplot2's Stat
+                              ggplot2:::check_required_aesthetics(
+                                self$required_aes,
+                                c(names(data), names(params)),
+                                ggplot2:::snake_class(self)
+                              )
+
+                              # Make sure required_aes consists of the used set of aesthetics in case of
+                              # "|" notation in self$required_aes
+                              required_aes <- intersect(
+                                names(data),
+                                unlist(strsplit(self$required_aes, "|", fixed = TRUE))
+                              )
+
+                              data <- ggplot2:::remove_missing(data, params$na.rm,
+                                c(required_aes, self$non_missing_aes),
+                                ggplot2:::snake_class(self),
+                                finite = FALSE # Note that in ggplot2's Stat this is TRUE
+                              )
+
+                              # Trim off extra parameters
+                              params <- params[intersect(names(params), self$parameters())]
+
+                              args <- c(list(data = quote(data), scales = quote(scales)), params)
+                              ggplot2:::dapply(data, "PANEL", function(data) {
+                                scales <- layout$get_scales(data$PANEL[1])
+                                tryCatch(do.call(self$compute_panel, args), error = function(e) {
+                                  warning(glue::glue("Computation failed in `{ggplot2:::snake_class(self)}()`:\n{e$message}"))
+                                  ggplot2:::new_data_frame()
+                                })
+                              })
+                            },
+
                             setup_params = function(data, params) {
                               if (identical(params$method, "auto")) {
                                 # Use default nn correction for small datasets, kde2d for
@@ -85,15 +119,17 @@ StatPointdensity <- ggproto("StatPointdensity", Stat,
 
                               } else if (identical(method, "kde2d")) {
 
+                                finites <- is.finite(data$x) & is.finite(data$y)
+                                ddata <- data[finites,]
                                 base.args <- list(
-                                  x = data$x,
-                                  y = data$y,
+                                  x = ddata$x,
+                                  y = ddata$y,
                                   lims = c(scales$x$dimension(), scales$y$dimension()))
                                 if (!is.element("n", names(method.args))) {
                                   method.args["n"] <- 100
                                 }
                                 if (!is.element("h", names(method.args))) {
-                                  h <- c(MASS::bandwidth.nrd(data$x), MASS::bandwidth.nrd(data$y))
+                                  h <- c(MASS::bandwidth.nrd(ddata$x), MASS::bandwidth.nrd(ddata$y))
                                   method.args$h <- h * adjust
                                 }
 

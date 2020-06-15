@@ -25,8 +25,15 @@ SEXP count_neighbors_( SEXP x, SEXP y, SEXP r2, SEXP xy ) {
       for( int j = 0; j < l; j++ ) {
         double dx = xi - xp[j];
         double dy = yi - yp[j];
-        if( yxp*dx*dx + xyp*dy*dy <= r2p )
-          s++;
+        if(R_FINITE(dx) && R_FINITE(dy)){
+          if( yxp*dx*dx + xyp*dy*dy <= r2p )
+            s++;
+        }else{
+          if((! R_FINITE(dx) && xyp * dy * dy < r2p) ||
+             (! R_FINITE(dy) && xyp * dx * dx < r2p) ){
+            s++;
+          }
+        }
       }
       resp[i] = s;
     }

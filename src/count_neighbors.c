@@ -22,18 +22,18 @@ SEXP count_neighbors_( SEXP x, SEXP y, SEXP r2, SEXP xy ) {
       int s = 0;
       double xi = xp[i];
       double yi = yp[i];
-      for( int j = 0; j < l; j++ ) {
-        double dx = xi - xp[j];
-        double dy = yi - yp[j];
-        if(R_FINITE(dx) && R_FINITE(dy)){
-          if( yxp*dx*dx + xyp*dy*dy <= r2p )
-            s++;
-        }else{
-          if((! R_FINITE(dx) && xyp * dy * dy < r2p) ||
-             (! R_FINITE(dy) && xyp * dx * dx < r2p) ){
-            s++;
-          }
+      for( int j = 0; j < l; j++ ) {\
+        double xj = xp[j];
+        double yj = yp[j];
+        double dx = xi - xj;
+        double dy = yi - yj;
+        if((xi == xj && yi == yj) ||
+           (xi == xj && xyp * dy * dy <= r2p) ||
+           (yi == yj && xyp * dx * dx <= r2p) ||
+           (yxp*dx*dx + xyp*dy*dy <= r2p) ){
+           s++;
         }
+
       }
       resp[i] = s;
     }

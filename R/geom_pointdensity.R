@@ -138,8 +138,8 @@ StatPointdensity <- ggproto("StatPointdensity", Stat,
                                 ix <- findInterval(data$x, dens$x)
                                 iy <- findInterval(data$y, dens$y)
                                 ii <- cbind(ix, iy)
-                                data$density <- dens$z[ii]
-
+                                data$density[finites] <- dens$z[ii]
+                                data$density[!finites] <- min(dens$z)
                               } else {
 
                                 if (is.character(method)) {

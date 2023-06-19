@@ -99,7 +99,6 @@ StatPointdensity <- ggproto("StatPointdensity", Stat,
 
                             compute_group = function(data, scales, adjust = 1, method = "auto",
                                                      method.args = list()) {
-
                               if (identical(method, "default")) {
 
                                 # find an appropriate bandwidth (radius), pretty ad-hoc:
@@ -130,6 +129,7 @@ StatPointdensity <- ggproto("StatPointdensity", Stat,
                                 }
                                 if (!is.element("h", names(method.args))) {
                                   h <- c(MASS::bandwidth.nrd(ddata$x), MASS::bandwidth.nrd(ddata$y))
+                                  h <- pmax(sqrt(.Machine$double.eps), h)
                                   method.args$h <- h * adjust
                                 }
 

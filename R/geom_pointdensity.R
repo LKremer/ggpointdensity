@@ -142,9 +142,12 @@ StatPointdensity <- ggproto("StatPointdensity", Stat,
       }
       if (!is.element("h", names(method.args))) {
         bandwidth_std <-  c(x=MASS::bandwidth.nrd(ddata$x), y=MASS::bandwidth.nrd(ddata$y))
+
         #alternative bandwidth calculation based on plot size that tries to match above
-        bandwidth_limits <- 4 * 1.06 * c(dx, dy) / (2*qnorm(1/nrow(ddata)/2, lower.tail = FALSE)) * nrow(ddata)^(-1/5)
-        bandwidth <- pmax(bandwidth_limits, bandwidth_std) #
+        n <- nrow(ddata)+1 # workaround for single-row data set
+        bandwidth_limits <- 4 * 1.06 * c(dx, dy) / (2*qnorm(1/n/2, lower.tail = FALSE)) * n^(-1/5)
+
+        bandwidth <- pmax(bandwidth_limits, bandwidth_std, na.rm = TRUE)
 
         method.args$h <- bandwidth * adjust
       }

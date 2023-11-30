@@ -20,6 +20,8 @@ Imports:
 Suggests:
     viridis,
     dplyr,
-    roxygen2 (>= 7.2.3)
+    roxygen2 (>= 7.2.3),
+    testthat (>= 3.0.0)
 RoxygenNote: 7.2.3
 Roxygen: list(markdown = TRUE)
+Config/testthat/edition: 3

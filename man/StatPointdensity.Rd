@@ -3,8 +3,8 @@
 \docType{data}
 \name{StatPointdensity}
 \alias{StatPointdensity}
-\title{ggproto class, see \code{\link[ggplot2]{Stat}}}
+\title{ggproto class, see \code{\link[ggplot2:ggplot2-ggproto]{ggplot2::Stat()}}}
 \description{
-ggproto class, see \code{\link[ggplot2]{Stat}}
+ggproto class, see \code{\link[ggplot2:ggplot2-ggproto]{ggplot2::Stat()}}
 }
 \keyword{datasets}

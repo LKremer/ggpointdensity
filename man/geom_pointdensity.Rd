@@ -50,8 +50,7 @@ objects will be fortified to produce a data frame. See
 
 A \code{function} will be called with a single argument, the plot data. The
 return value must be a \code{data.frame}, and will be used as the layer
-data. A \code{function} can be created from a \code{formula} (e.g. \code{~
-head(.x, 10)}).}
+data. A \code{function} can be created from a \code{formula} (e.g. \code{~ head(.x, 10)}).}
 
 \item{position}{Position adjustment, either as a string, or the result of a
 call to a position adjustment function.}
@@ -61,8 +60,7 @@ This includes \code{adjust}, a multiplicate bandwidth adjustment used to
 adjust the distance threshold to consider two points as neighbors, i.e. the
 radius around points in which neighbors are counted. For example,
 \code{adjust = 0.5} means use half of the default. Other arguments may be
-aesthetics, used to set an aesthetic to a fixed value, like \code{shape =
-17} or \code{size = 3}. They may also be parameters to the paired geom/stat.}
+aesthetics, used to set an aesthetic to a fixed value, like \code{shape = 17} or \code{size = 3}. They may also be parameters to the paired geom/stat.}
 
 \item{na.rm}{If \code{FALSE}, the default, missing values are removed with a
 warning. If \code{TRUE}, missing values are silently removed.}

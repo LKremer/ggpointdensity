@@ -16,6 +16,7 @@ LazyData: true
 Depends:
     R (>= 3.2)
 Imports:
+    cli,
     ggplot2
 Suggests:
     viridis,

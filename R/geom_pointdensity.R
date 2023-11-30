@@ -81,10 +81,13 @@ StatPointdensity <- ggproto("StatPointdensity", Stat,
                               args <- c(list(data = quote(data), scales = quote(scales)), params)
                               ggplot2:::dapply(data, "PANEL", function(data) {
                                 scales <- layout$get_scales(data$PANEL[1])
-                                tryCatch(do.call(self$compute_panel, args), error = function(e) {
-                                  warning(glue::glue("Computation failed in `{ggplot2:::snake_class(self)}()`:\n{e$message}"))
-                                  ggplot2:::new_data_frame()
-                                })
+                                rlang::try_fetch(
+                                  rlang::inject(self$compute_panel(data = data, scales = scales, !!!params)),
+                                  error = function(cnd) {
+                                   cli::cli_warn("Computation failed in {.fn {ggplot2:::snake_class(self)}}", parent = cnd)
+                                    ggplot2:::data_frame0()
+                                  }
+                                )
                               })
                             },
 

@@ -82,7 +82,7 @@ StatPointdensity <- ggproto("StatPointdensity", Stat,
     ggplot2:::dapply(data, "PANEL", function(data) {
       scales <- layout$get_scales(data$PANEL[1])
       rlang::try_fetch(
-        rlang::inject(self$compute_panel(data = data, scales = scales, !!!params)),
+        rlang::inject(self$compute_panel(data = data, scales = scales, !!!params, coord = layout$coord)),
         error = function(cnd) {
          cli::cli_warn("Computation failed in {.fn {ggplot2:::snake_class(self)}}", parent = cnd)
           ggplot2:::data_frame0()
@@ -109,18 +109,19 @@ StatPointdensity <- ggproto("StatPointdensity", Stat,
   },
 
   compute_group = function(data, scales, adjust = 1, method = "auto",
-                           method.args = list()) {
+                           method.args = list(), coord) {
+    scale_views <- coord$setup_panel_params(scales$x, scales$y)
+    dx <- diff(xrange <- scale_views$x.range)
+    dy <- diff(yrange <- scale_views$y.range)
 
     if (identical(method, "default")) {
 
       # find an appropriate bandwidth (radius), pretty ad-hoc:
-      xrange <- diff(scales$x$get_limits()) * adjust
-      yrange <- diff(scales$y$get_limits()) * adjust
-      r2 <- (xrange + yrange) / 70
+      r2 <- (dx + dy) / 70 * adjust
 
       # since x and y may be on different scales, we need a
       # factor to weight x and y distances accordingly:
-      xy <- xrange / yrange
+      xy <- dx / dy
 
       # counting the number of neighbors around each point,
       # this will be used to color the points
@@ -140,8 +141,12 @@ StatPointdensity <- ggproto("StatPointdensity", Stat,
         method.args["n"] <- 100
       }
       if (!is.element("h", names(method.args))) {
-        h <- c(MASS::bandwidth.nrd(ddata$x), MASS::bandwidth.nrd(ddata$y))
-        method.args$h <- h * adjust
+        bandwidth_std <-  c(x=MASS::bandwidth.nrd(ddata$x), y=MASS::bandwidth.nrd(ddata$y))
+        #alternative bandwidth calculation based on plot size that tries to match above
+        bandwidth_limits <- 4 * 1.06 * c(dx, dy) / (2*qnorm(1/nrow(ddata)/2, lower.tail = FALSE)) * nrow(ddata)^(-1/5)
+        bandwidth <- pmax(bandwidth_limits, bandwidth_std) #
+
+        method.args$h <- bandwidth * adjust
       }
 
       dens <- do.call(MASS::kde2d, c(base.args, method.args))

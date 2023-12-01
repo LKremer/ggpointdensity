@@ -166,16 +166,7 @@ StatPointdensity <- ggproto("StatPointdensity", Stat,
 
   setup_params = function(data, params) {
     if (identical(params$method, "auto")) {
-      # Use default nn correction for small datasets, kde2d for
-      # larger. Based on size of the _largest_ group.
-      max_group <- max(table(interaction(data$group, data$PANEL, drop = TRUE)))
-      if (max_group > 20000) {
-        message(paste0("geom_pointdensity using method='kde2d' ",
-                       "due to large number of points (>20k)"))
-        params$method <- "kde2d"
-      } else {
-        params$method <- "default"
-      }
+      params$method <- "default"
     }
 
     params

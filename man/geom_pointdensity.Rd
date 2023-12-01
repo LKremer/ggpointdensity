@@ -13,6 +13,7 @@ stat_pointdensity(
   position = "identity",
   ...,
   adjust = 1,
+  aspect.ratio = ggplot2::theme_get()$aspect.ratio,
   na.rm = FALSE,
   method = "auto",
   method.args = list(),
@@ -27,6 +28,7 @@ geom_pointdensity(
   position = "identity",
   ...,
   method = "auto",
+  aspect.ratio = ggplot2::theme_get()$aspect.ratio,
   na.rm = FALSE,
   show.legend = NA,
   inherit.aes = TRUE

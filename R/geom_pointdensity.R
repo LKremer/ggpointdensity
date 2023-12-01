@@ -22,6 +22,7 @@ stat_pointdensity <- function(mapping = NULL,
                               position = "identity",
                               ...,
                               adjust = 1,
+                              aspect.ratio = ggplot2::theme_get()$aspect.ratio,
                               na.rm = FALSE,
                               method = "auto",
                               method.args = list(),
@@ -37,6 +38,7 @@ stat_pointdensity <- function(mapping = NULL,
     inherit.aes = inherit.aes,
     params = list(
       adjust = adjust,
+      aspect.ratio = aspect.ratio,
       na.rm = na.rm,
       method = method,
       method.args = method.args,
@@ -53,6 +55,8 @@ stat_pointdensity <- function(mapping = NULL,
 StatPointdensity <- ggproto("StatPointdensity", Stat,
   default_aes = aes(color = stat(density)),
   required_aes = c("x", "y"),
+
+  extra_params = c("aspect.ratio", Stat$extra_params),
 
   compute_layer = function(self, data, params, layout) {
     # This function mostly copied from ggplot2's Stat
@@ -109,25 +113,37 @@ StatPointdensity <- ggproto("StatPointdensity", Stat,
   },
 
   compute_group = function(data, scales, adjust = 1, method = "auto",
-                           method.args = list(), coord) {
+                           method.args = list(), ..., aspect.ratio = NULL, coord) {
     scale_views <- coord$setup_panel_params(scales$x, scales$y)
     dx <- diff(xrange <- scale_views$x.range)
     dy <- diff(yrange <- scale_views$y.range)
 
-    if (identical(method, "default")) {
+    ratio <- dy/dx
 
+    is_using_aspect.ratio <- !is.null(aspect.ratio)
+    is_using_coord_fixed <- inherits(coord, "CoordFixed")
+
+    if (is_using_aspect.ratio && is_using_coord_fixed) cli::cli_abort(c(
+      "Only one of {.arg aspect.ratio} and {.fn coord_fixed} must be used",
+      ">" = "either set {.code aspect.ratio=NULL} (the default) or remove {.fn coord_fixed}/{.fn coord_equal}."
+    ))
+    if (is_using_aspect.ratio) {
+      ratio <- dy/dx/aspect.ratio
+    }
+    if (is_using_coord_fixed) {
+      ratio <- 1/coord$ratio
+    }
+
+    if (identical(method, "default")) {
       # find an appropriate bandwidth (radius), pretty ad-hoc:
-      r2 <- (dx + dy) / 70 * adjust
+      r2 <- (dx*sqrt(ratio) + dy/sqrt(ratio)) / 70 * adjust
 
       # since x and y may be on different scales, we need a
       # factor to weight x and y distances accordingly:
-      xy <- dx / dy
+      xy <- dx / dy / ratio
 
-      # counting the number of neighbors around each point,
-      # this will be used to color the points
-      data$density <- count_neighbors(
-        data$x, data$y, r2 = r2, xy = xy)
-
+      # find an appropriate bandwidth (radius), pretty ad-hoc:                                                                                                                                                                                                                                                                    xrange <- diff(scales$x$get_limits()) * adjust                                                                                                                                                                                                                                                                              yrange <- diff(scales$y$get_limits()) * adjust                                                                                                                                                                                                                                                                              r2 <- (xrange + yrange) / 70                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            # since x and y may be on different scales, we need a                                                                                                                                                                                                                                                                       # factor to weight x and y distances accordingly:                                                                                                                                                                                                                                                                           xy <- xrange / yrange
+      data$density <- count_neighbors(data$x, data$y, r2 = r2, xy = xy)
 
     } else if (identical(method, "kde2d")) {
 
@@ -148,7 +164,15 @@ StatPointdensity <- ggproto("StatPointdensity", Stat,
         bandwidth_limits <- 4 * 1.06 * c(dx, dy) / (2*qnorm(1/n/2, lower.tail = FALSE)) * n^(-1/5)
 
         bandwidth <- pmax(bandwidth_limits, bandwidth_std, na.rm = TRUE)
+        bandwidth <- mean(bandwidth)
 
+        if (getOption("ggpointdensity.verbose", default = FALSE)) cli::cli_inform(c(
+          "selected joint bandwidth is {round(bandwidth, 6)}.",
+          "i" = "bandwidths derived from effective scale limits are {round(bandwidth_limits, 6)}.",
+          "i" = "bandwidths derived from data variance are {round(bandwidth_std, 6)}."
+        ))
+
+        bandwidth <- sqrt(c(x=1/ratio , y=ratio)) * bandwidth
         method.args$h <- bandwidth * adjust
       }
 
@@ -298,6 +322,7 @@ geom_pointdensity <- function(mapping = NULL,
                               position = "identity",
                               ...,
                               method = "auto",
+                              aspect.ratio = ggplot2::theme_get()$aspect.ratio,
                               na.rm = FALSE,
                               show.legend = NA,
                               inherit.aes = TRUE) {
@@ -312,6 +337,7 @@ geom_pointdensity <- function(mapping = NULL,
     inherit.aes = inherit.aes,
     params = list(
       method = method,
+      aspect.ratio = aspect.ratio,
       na.rm = na.rm,
       ...
     )

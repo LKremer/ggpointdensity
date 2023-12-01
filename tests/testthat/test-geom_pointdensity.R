@@ -17,6 +17,23 @@ for( method in c("default", "kde2d") ) {
     expect_no_warning(print(p1))
   })
 
+
+  test_that(cli::format_inline("wrong aspect.ratio gives warning ({.code method=\"{method}\"})"), {
+    a.r <- 3
+    p1 <- ggplot(df_isotropic_normal, aes(x, y)) + geom_pointdensity(method= method, aspect.ratio = 2*a.r) + theme(aspect.ratio = a.r)
+    expect_warning(print(p1))
+  })
+
+  test_that(cli::format_inline("No aspect.ratio / coord_fixed gives warning ({.code method=\"{method}\"})"), {
+    p1 <- ggplot(df_isotropic_normal, aes(x, y)) + geom_pointdensity(method= method, aspect.ratio = NULL) + theme(aspect.ratio = NULL)
+    expect_warning(print(p1), class = "actual_aspect_ratio_does_not_match_expectation")
+  })
+
+  test_that(cli::format_inline("No aspect.ratio / coord_fixed gives no warning if actual aspect ratio is 1 ({.code method=\"{method}\"})"), {
+    p1 <- ggplot(df_isotropic_normal, aes(x, y)) + geom_pointdensity(method= method, aspect.ratio = NULL) + theme(aspect.ratio = 1)
+    expect_no_warning(print(p1))
+  })
+
   test_that(cli::format_inline("aspect.ratio adjusts density for three isotropic normals ({.code method=\"{method}\"})"), {
 
     a.r <- 10

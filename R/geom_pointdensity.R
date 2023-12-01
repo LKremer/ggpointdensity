@@ -14,6 +14,40 @@ count_neighbors_r <- function(x, y, r2, xy) {
 }
 
 
+#' Wraps the user supplied Geom (typically GeomPoint) to add class "check_aspect_grob" and information about the aspect ratio assumed under which the densities were calculated to the grobs it draws
+#' The check is injected by providing an S3 instance to the makeContext generic that is called by grid for each grob at render time (where the actual plot aspect ratio is finally known)
+#' @import rlang
+addCheckToGeom <- function(orig_geom, expected_aspect_ratio = 1) {
+  if (is.null(orig_geom))
+    cli::cli_abort("Can't create layer without a geom.", call = rlang::caller_env())
+  OrigGeom <- ggplot2:::check_subclass(orig_geom, "Geom", env = parent.frame(n = 2), call = parent.frame(n = 2))
+  expected_aspect_ratio <- expected_aspect_ratio %||% 1
+  GeomWithCheck <-
+    ggproto(
+      paste0(class(OrigGeom)[1], "_with_ggpointdensity_checks"),
+      OrigGeom,
+      draw_layer = function(self, data, params, layout, coord) {
+        grobs <- OrigGeom$draw_layer(data, params, layout, coord)
+        is_using_coord_fixed <- inherits(layout$coord, "CoordFixed")
+        if(is_using_coord_fixed) return(grobs) # don't add check if actual aspect ratio is known ahead of time
+        check_added_once <- FALSE
+        grobs <- lapply(grobs, function(grob) {
+          if (inherits(grob, "zeroGrob")) { # don't check if nothing is drawn
+            return(grob)
+          }
+          if(!check_added_once) { # add check to at most one grob
+            class(grob) <- c("check_aspect_grob", class(grob))
+            grob["expected_aspect_ratio"] <- list(expected_aspect_ratio)
+            check_added_once <- TRUE
+          }
+          return(grob)
+        })
+        grobs
+      }
+    )
+  return(GeomWithCheck)
+}
+
 #' @rdname geom_pointdensity
 #' @export
 stat_pointdensity <- function(mapping = NULL,
@@ -28,11 +62,12 @@ stat_pointdensity <- function(mapping = NULL,
                               method.args = list(),
                               show.legend = NA,
                               inherit.aes = TRUE) {
+  GeomWithCheck <- addCheckToGeom(geom, expected_aspect_ratio = aspect.ratio)
   layer(
     data = data,
     mapping = mapping,
     stat = StatPointdensity,
-    geom = geom,
+    geom = GeomWithCheck,
     position = position,
     show.legend = show.legend,
     inherit.aes = inherit.aes,
@@ -45,6 +80,40 @@ stat_pointdensity <- function(mapping = NULL,
       ...
     )
   )
+}
+
+#' @export
+#' @noRd
+#' @importFrom grid makeContext
+#' @method makeContext check_aspect_grob
+makeContext.check_aspect_grob <- function(x) {
+  # Grab viewport information
+  vp <- if (is.null(x$vp)){
+    grid::viewport()
+  } else{
+    x$vp
+  }
+  width <- grid::convertWidth(unit(1, "npc"), "inch", valueOnly = TRUE)
+  height <- grid::convertHeight(unit(1, "npc"), "inch", valueOnly = TRUE)
+  actual_aspect_ratio <-  height/width
+  expected_aspect_ratio <-  x$expected_aspect_ratio
+
+  if (getOption("ggpointdensity.verbose", default = FALSE)) cli::cli_inform(c(
+      "Actual aspect ratio: {actual_aspect_ratio}.",
+      "Expected aspect ratio: {expected_aspect_ratio}."
+    ))
+
+  if(!isTRUE(all.equal(expected_aspect_ratio, actual_aspect_ratio)) ) cli::cli_warn(c(
+    "Actual plot aspect ratio does not match {.arg aspect.ratio} of {.code StatPointdensity}",
+    "!" =  "The shown densities are be a bit off.",
+    "*" = "Actual plot aspect ratio is {actual_aspect_ratio}.",
+    "*" =  "{.arg aspect.ratio} used by {.code StatPointdensity} is {expected_aspect_ratio}.",
+    ">" = "Consider using one of the three options below to fix this:",
+    "*" = "Add {.code    theme(aspect.ratio = {expected_aspect_ratio}) +}. (This will resize your plot independently of the data).",
+    "*" = "Add {.code     coord_fixed(ratio = {expected_aspect_ratio}) +} and set {.code aspect.ratio=NULL}. (This will resize your plot depending on the data)",
+    "*" = "Add  {.code aspect.ratio={actual_aspect_ratio}} to {.fun stat/geom_pointdensity}. (This will correct the density calculation to match your plot's current size)"
+    ), class = "actual_aspect_ratio_does_not_match_expectation")
+  NextMethod()
 }
 
 
@@ -326,12 +395,13 @@ geom_pointdensity <- function(mapping = NULL,
                               na.rm = FALSE,
                               show.legend = NA,
                               inherit.aes = TRUE) {
+  GeomPointWithCheck <- addCheckToGeom(ggplot2::GeomPoint, expected_aspect_ratio = aspect.ratio)
 
   ggplot2::layer(
     data = data,
     mapping = mapping,
     stat = stat,
-    geom = ggplot2::GeomPoint,
+    geom = GeomPointWithCheck,
     position = position,
     show.legend = show.legend,
     inherit.aes = inherit.aes,

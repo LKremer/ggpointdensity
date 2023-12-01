@@ -17,7 +17,8 @@ Depends:
     R (>= 3.2)
 Imports:
     cli,
-    ggplot2
+    ggplot2,
+    grid
 Suggests:
     viridis,
     dplyr,

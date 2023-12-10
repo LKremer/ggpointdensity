@@ -122,7 +122,7 @@ makeContext.check_aspect_grob <- function(x) {
 #' @usage NULL
 #' @export
 StatPointdensity <- ggproto("StatPointdensity", Stat,
-  default_aes = aes(color = stat(density)),
+  default_aes = aes(color = after_stat(density)),
   required_aes = c("x", "y"),
 
   extra_params = c("aspect.ratio", Stat$extra_params),

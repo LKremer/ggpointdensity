@@ -166,7 +166,7 @@ StatPointdensity <- ggproto("StatPointdensity", Stat,
 
   setup_params = function(data, params) {
     if (identical(params$method, "auto")) {
-      params$method <- "default"
+      params$method <- "kde2d"
     }
 
     params

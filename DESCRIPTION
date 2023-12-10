@@ -18,7 +18,8 @@ Depends:
 Imports:
     cli,
     ggplot2,
-    grid
+    grid,
+    rlang
 Suggests:
     viridis,
     dplyr,

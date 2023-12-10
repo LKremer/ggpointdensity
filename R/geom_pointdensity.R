@@ -111,7 +111,7 @@ makeContext.check_aspect_grob <- function(x) {
     ">" = "Consider using one of the three options below to fix this:",
     "*" = "Add {.code    theme(aspect.ratio = {expected_aspect_ratio}) +}. (This will resize your plot independently of the data).",
     "*" = "Add {.code     coord_fixed(ratio = {expected_aspect_ratio}) +} and set {.code aspect.ratio=NULL}. (This will resize your plot depending on the data)",
-    "*" = "Add  {.code aspect.ratio={actual_aspect_ratio}} to {.fun stat/geom_pointdensity}. (This will correct the density calculation to match your plot's current size)"
+    "*" = "Add  {.code aspect.ratio={actual_aspect_ratio}} to {.fun stat_pointdensity}/{.fun geom_pointdensity}. (This will correct the density calculation to match your plot's current size)"
     ), class = "actual_aspect_ratio_does_not_match_expectation")
   NextMethod()
 }

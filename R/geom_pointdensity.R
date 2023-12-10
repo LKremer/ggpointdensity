@@ -198,12 +198,8 @@ StatPointdensity <- ggproto("StatPointdensity", Stat,
       # find an appropriate bandwidth (radius), pretty ad-hoc:
       r2 <- (dx*sqrt(ratio) + dy/sqrt(ratio)) / 70 * adjust
 
-      # since x and y may be on different scales, we need a
-      # factor to weight x and y distances accordingly:
-      xy <- dx / dy / ratio
-
       # find an appropriate bandwidth (radius), pretty ad-hoc:                                                                                                                                                                                                                                                                    xrange <- diff(scales$x$get_limits()) * adjust                                                                                                                                                                                                                                                                              yrange <- diff(scales$y$get_limits()) * adjust                                                                                                                                                                                                                                                                              r2 <- (xrange + yrange) / 70                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            # since x and y may be on different scales, we need a                                                                                                                                                                                                                                                                       # factor to weight x and y distances accordingly:                                                                                                                                                                                                                                                                           xy <- xrange / yrange
-      data$density <- count_neighbors(data$x, data$y, r2 = r2, xy = xy)
+      data$density <- count_neighbors(data$x, data$y, r2 = r2, xy = 1/ratio)
 
     } else if (identical(method, "kde2d")) {
 

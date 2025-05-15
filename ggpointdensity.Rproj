@@ -1,8 +1,8 @@
 Version: 1.0
-ProjectId: 6a2d6b43-ead7-4aa9-b74f-21a40c58c5dd
+ProjectId: 4df48c66-361e-4e89-8558-6af2dc8c4043
 
-RestoreWorkspace: Default
-SaveWorkspace: Default
+RestoreWorkspace: No
+SaveWorkspace: No
 AlwaysSaveHistory: Default
 
 EnableCodeIndexing: Yes
@@ -15,7 +15,9 @@ LaTeX: pdfLaTeX
 
 AutoAppendNewline: Yes
 StripTrailingWhitespace: Yes
+LineEndingConversion: Posix
 
 BuildType: Package
 PackageUseDevtools: Yes
 PackageInstallArgs: --no-multiarch --with-keep.source
+PackageRoxygenize: rd,collate,namespace

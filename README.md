@@ -1,6 +1,9 @@
 # ggpointdensity
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/LKremer/ggpointdensity/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/LKremer/ggpointdensity/actions/workflows/check-standard.yaml)
 [![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/ggpointdensity)](https://cran.r-project.org/package=ggpointdensity) 
 [![Downloads](https://cranlogs.r-pkg.org/badges/last-month/ggpointdensity?color=brightgreen)](https://cran.r-project.org/package=ggpointdensity)
+<!-- badges: end -->
 
 Introduces `geom_pointdensity()`: A cross between a scatter plot and a 2D density plot.
 

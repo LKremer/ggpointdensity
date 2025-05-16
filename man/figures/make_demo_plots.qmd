@@ -21,7 +21,7 @@ library(devtools)
 load_all()
 
 theme_set(theme_minimal())
-theme_update(plot.background = element_rect(fill = 'white'))
+theme_update(plot.background = element_rect(fill = 'white', color = "white"))
 ```
 
 Generate some toy data:

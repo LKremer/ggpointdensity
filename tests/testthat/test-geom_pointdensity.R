@@ -39,7 +39,7 @@ test_that("coord_fixed adjusts density correctly (method='kde2d')", {
 })
 
 
-for (method in c("default", "kde2d")) {
+for (method in c("neighbors", "kde2d")) {
   test_that(
     paste0(
       "coord_fixed(method='",

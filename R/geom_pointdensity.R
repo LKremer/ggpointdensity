@@ -1,17 +1,21 @@
-#' Count Neighbors within a Radius (R Implementation)
+#' Count Neighbors within a Radius
 #'
-#' This function counts the number of neighboring points within a specified radius for each point in a given set of coordinates using an R implementation.
+#' This function counts the number of neighboring points within a specified
+#' radius for each point in a given set of coordinates using a C implementation.
 #'
 #' @param x A numeric vector of x-coordinates of the points.
 #' @param y A numeric vector of y-coordinates of the points.
-#' @param r2 A numeric value representing the squared radius within which to search for neighboring points.
-#' @param xy A numeric value representing the aspect ratio (usually the ratio of the y-scale to the x-scale).
-#' @return A numeric vector where each element represents the count of neighboring points within the specified radius for each point.
+#' @param r2 A numeric value representing the squared radius within which to
+#'   search for neighboring points.
+#' @param xy A numeric value representing the aspect ratio (usually the ratio of
+#'   the y-scale to the x-scale).
+#' @return A numeric vector where each element represents the count of
+#'   neighboring points within the specified radius for each point.
 count_neighbors <- function(x, y, r2, xy) {
   .Call("count_neighbors_", x, y, r2, xy, "ggpointdensity")
 }
 
-# Equivalent R code:
+# Equivalent R code for reference:
 # count_neighbors_r <- function(x, y, r2, xy) {
 #   yx <- 1 / xy
 #   sapply(1:length(x), function(i) {
@@ -20,6 +24,11 @@ count_neighbors <- function(x, y, r2, xy) {
 # }
 
 #' @inherit geom_pointdensity
+#' @param geom The geometric object to use to display the data for this layer,
+#'   defaults to "point".
+#' @param method.args List of additional arguments passed on to the density
+#'   estimation function defined by `method` (e.g. [MASS::kde2d()] when
+#'   `method`==`kde2d`)
 #'
 #' @export
 stat_pointdensity <- function(
@@ -30,11 +39,12 @@ stat_pointdensity <- function(
   ...,
   adjust = 1,
   na.rm = FALSE,
-  method = "auto",
+  method = c("auto", "kde2d", "neighbors"),
   method.args = list(),
   show.legend = NA,
   inherit.aes = TRUE
 ) {
+  method <- match.arg(method)
   layer(
     data = data,
     mapping = mapping,
@@ -104,12 +114,12 @@ StatPointdensity <- ggproto(
       max_group <- max(table(interaction(data$group, data$PANEL, drop = TRUE)))
       if (max_group > 20000) {
         message(paste0(
-          "geom_pointdensity using method='kde2d' ",
-          "due to large number of points (>20k)"
+          "geom_pointdensity() using method='kde2d' due to large number of ",
+          "points (>20k). You may override this by setting method='neighbors'."
         ))
         params$method <- "kde2d"
       } else {
-        params$method <- "default"
+        params$method <- "neighbors"
       }
     }
 
@@ -127,7 +137,7 @@ StatPointdensity <- ggproto(
 
     if (nrow(data[finites, ]) == 1) {
       data$density <- NA
-    } else if (identical(method, "default")) {
+    } else if (identical(method, "neighbors")) {
       # find an appropriate bandwidth (radius), pretty ad-hoc:
       xrange <- diff(scales$x$get_limits()) * adjust
       yrange <- diff(scales$y$get_limits()) * adjust
@@ -184,13 +194,27 @@ StatPointdensity <- ggproto(
 
 #' A cross between a scatter plot and a 2D density plot
 #'
-#' @param method description
-#' @param adjust description
 #' @inheritParams ggplot2::geom_point
+#' @param method Density estimation method. Options are `"auto"`, `"neighbors"`,
+#'   or `"kde2d"`.
 #'
-#' @export
+#'   - `"auto"` (default): Selects the appropriate method based on the number of
+#'   points.
+#'   `"neighbors"` is faster for small datasets, while `"kde2d"` is more
+#'   efficient for large datasets.
+#'   - `"neighbors"`: Determines an appropriate radius and counts the number of
+#'   points within this radius for each point.
+#'   - `"kde2d"`: Uses 2D kernel density estimation via [MASS::kde2d()].
+#'   Additional arguments can be provided through `method.args`.
+#'
+#' @param adjust Multiplicative bandwidth adjustment for density estimation. A
+#'   value less than 1 (e.g., `adjust = 0.5`) yields a smoother density
+#'   estimate, while a value greater than 1 (e.g., `adjust = 2`) increases the
+#'   level of visible detail.
 #'
 #' @inheritSection ggplot2::geom_point Aesthetics
+#'
+#' @export
 #'
 #' @examples
 #' library(ggpointdensity)
@@ -262,12 +286,13 @@ geom_pointdensity <- function(
   stat = "pointdensity",
   position = "identity",
   ...,
-  method = "auto",
+  method = c("auto", "kde2d", "neighbors"),
   adjust = 1,
   na.rm = FALSE,
   show.legend = NA,
   inherit.aes = TRUE
 ) {
+  method <- match.arg(method)
   ggplot2::layer(
     data = data,
     mapping = mapping,

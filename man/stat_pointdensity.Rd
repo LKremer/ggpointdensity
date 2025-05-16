@@ -12,7 +12,7 @@ stat_pointdensity(
   ...,
   adjust = 1,
   na.rm = FALSE,
-  method = "auto",
+  method = c("auto", "kde2d", "neighbors"),
   method.args = list(),
   show.legend = NA,
   inherit.aes = TRUE
@@ -38,6 +38,9 @@ A \code{function} will be called with a single argument,
 the plot data. The return value must be a \code{data.frame}, and
 will be used as the layer data. A \code{function} can be created
 from a \code{formula} (e.g. \code{~ head(.x, 10)}).}
+
+\item{geom}{The geometric object to use to display the data for this layer,
+defaults to "point".}
 
 \item{position}{A position adjustment to use on the data for this layer. This
 can be used in various ways, including to prevent overplotting and
@@ -80,12 +83,30 @@ lists which parameters it can accept.
 \link[ggplot2:draw_key]{key glyphs}, to change the display of the layer in the legend.
 }}
 
-\item{adjust}{description}
+\item{adjust}{Multiplicative bandwidth adjustment for density estimation. A
+value less than 1 (e.g., \code{adjust = 0.5}) yields a smoother density
+estimate, while a value greater than 1 (e.g., \code{adjust = 2}) increases the
+level of visible detail.}
 
 \item{na.rm}{If \code{FALSE}, the default, missing values are removed with
 a warning. If \code{TRUE}, missing values are silently removed.}
 
-\item{method}{description}
+\item{method}{Density estimation method. Options are \code{"auto"}, \code{"neighbors"},
+or \code{"kde2d"}.
+\itemize{
+\item \code{"auto"} (default): Selects the appropriate method based on the number of
+points.
+\code{"neighbors"} is faster for small datasets, while \code{"kde2d"} is more
+efficient for large datasets.
+\item \code{"neighbors"}: Determines an appropriate radius and counts the number of
+points within this radius for each point.
+\item \code{"kde2d"}: Uses 2D kernel density estimation via \code{\link[MASS:kde2d]{MASS::kde2d()}}.
+Additional arguments can be provided through \code{method.args}.
+}}
+
+\item{method.args}{List of additional arguments passed on to the density
+estimation function defined by \code{method} (e.g. \code{\link[MASS:kde2d]{MASS::kde2d()}} when
+\code{method}==\code{kde2d})}
 
 \item{show.legend}{logical. Should this layer be included in the legends?
 \code{NA}, the default, includes if any aesthetics are mapped.

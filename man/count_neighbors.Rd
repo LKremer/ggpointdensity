@@ -2,7 +2,7 @@
 % Please edit documentation in R/geom_pointdensity.R
 \name{count_neighbors}
 \alias{count_neighbors}
-\title{Count Neighbors within a Radius (R Implementation)}
+\title{Count Neighbors within a Radius}
 \usage{
 count_neighbors(x, y, r2, xy)
 }
@@ -11,13 +11,17 @@ count_neighbors(x, y, r2, xy)
 
 \item{y}{A numeric vector of y-coordinates of the points.}
 
-\item{r2}{A numeric value representing the squared radius within which to search for neighboring points.}
+\item{r2}{A numeric value representing the squared radius within which to
+search for neighboring points.}
 
-\item{xy}{A numeric value representing the aspect ratio (usually the ratio of the y-scale to the x-scale).}
+\item{xy}{A numeric value representing the aspect ratio (usually the ratio of
+the y-scale to the x-scale).}
 }
 \value{
-A numeric vector where each element represents the count of neighboring points within the specified radius for each point.
+A numeric vector where each element represents the count of
+neighboring points within the specified radius for each point.
 }
 \description{
-This function counts the number of neighboring points within a specified radius for each point in a given set of coordinates using an R implementation.
+This function counts the number of neighboring points within a specified
+radius for each point in a given set of coordinates using a C implementation.
 }

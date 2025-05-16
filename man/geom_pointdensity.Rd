@@ -10,7 +10,7 @@ geom_pointdensity(
   stat = "pointdensity",
   position = "identity",
   ...,
-  method = "auto",
+  method = c("auto", "kde2d", "neighbors"),
   adjust = 1,
   na.rm = FALSE,
   show.legend = NA,
@@ -92,9 +92,23 @@ lists which parameters it can accept.
 \link[ggplot2:draw_key]{key glyphs}, to change the display of the layer in the legend.
 }}
 
-\item{method}{description}
+\item{method}{Density estimation method. Options are \code{"auto"}, \code{"neighbors"},
+or \code{"kde2d"}.
+\itemize{
+\item \code{"auto"} (default): Selects the appropriate method based on the number of
+points.
+\code{"neighbors"} is faster for small datasets, while \code{"kde2d"} is more
+efficient for large datasets.
+\item \code{"neighbors"}: Determines an appropriate radius and counts the number of
+points within this radius for each point.
+\item \code{"kde2d"}: Uses 2D kernel density estimation via \code{\link[MASS:kde2d]{MASS::kde2d()}}.
+Additional arguments can be provided through \code{method.args}.
+}}
 
-\item{adjust}{description}
+\item{adjust}{Multiplicative bandwidth adjustment for density estimation. A
+value less than 1 (e.g., \code{adjust = 0.5}) yields a smoother density
+estimate, while a value greater than 1 (e.g., \code{adjust = 2}) increases the
+level of visible detail.}
 
 \item{na.rm}{If \code{FALSE}, the default, missing values are removed with
 a warning. If \code{TRUE}, missing values are silently removed.}

@@ -196,8 +196,10 @@ StatPointdensity <- ggproto(
 #' A cross between a scatter plot and a 2D density plot
 #'
 #' @description `geom_pointdensity()` visualizes overlapping data points on a 2D
-#'   coordinate system. It combines the benefits of [geom_point()],
-#'   [geom_density2d()], and [geom_bin2d()] by coloring individual points based
+#'   coordinate system. It combines the benefits of
+#'   [`geom_point()`][ggplot2::geom_point()],
+#'   [`geom_density2d()`][ggplot2::geom_density2d()], and
+#'   [`geom_bin2d()`][ggplot2::geom_bin2d()] by coloring individual points based
 #'   on the density of neighboring points. This approach highlights the overall
 #'   data distribution while preserving the visibility of individual outliers,
 #'   making it ideal for data exploration.
@@ -216,8 +218,8 @@ StatPointdensity <- ggproto(
 #' @param method.args List of additional arguments passed on to the density
 #'   estimation function defined by `method` (e.g. [MASS::kde2d()]).
 #' @param adjust Multiplicative bandwidth adjustment for density estimation. A
-#'   value less than 1 (e.g., `adjust = 0.5`) yields a smoother density
-#'   estimate, while a value greater than 1 (e.g., `adjust = 2`) increases the
+#'   value less than 1 (e.g., `adjust = 0.1`) yields a smoother density
+#'   estimate, while a value greater than 1 (e.g., `adjust = 5`) increases the
 #'   level of visible detail.
 #'
 #' @inheritSection ggplot2::geom_point Aesthetics

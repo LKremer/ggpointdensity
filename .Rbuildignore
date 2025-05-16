@@ -1,5 +1,6 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^\.github/*$
 ^ggpointdensity\.Rproj$
 ^LICENSE\.md$
 ^cran-comments\.md$

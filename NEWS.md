@@ -1,3 +1,5 @@
+# ggpointdensity (development version)
+
 # ggpointdensity 0.2.0
 
 * Added an alternative method for density estimation: MASS::kde2d()

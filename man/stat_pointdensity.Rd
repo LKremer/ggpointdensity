@@ -84,8 +84,8 @@ lists which parameters it can accept.
 }}
 
 \item{adjust}{Multiplicative bandwidth adjustment for density estimation. A
-value less than 1 (e.g., \code{adjust = 0.5}) yields a smoother density
-estimate, while a value greater than 1 (e.g., \code{adjust = 2}) increases the
+value less than 1 (e.g., \code{adjust = 0.1}) yields a smoother density
+estimate, while a value greater than 1 (e.g., \code{adjust = 5}) increases the
 level of visible detail.}
 
 \item{na.rm}{If \code{FALSE}, the default, missing values are removed with
@@ -119,8 +119,10 @@ the default plot specification, e.g. \code{\link[ggplot2:borders]{borders()}}.}
 }
 \description{
 \code{geom_pointdensity()} visualizes overlapping data points on a 2D
-coordinate system. It combines the benefits of \code{\link[=geom_point]{geom_point()}},
-\code{\link[=geom_density2d]{geom_density2d()}}, and \code{\link[=geom_bin2d]{geom_bin2d()}} by coloring individual points based
+coordinate system. It combines the benefits of
+\code{\link[ggplot2:geom_point]{geom_point()}},
+\code{\link[ggplot2:geom_density_2d]{geom_density2d()}}, and
+\code{\link[ggplot2:geom_bin_2d]{geom_bin2d()}} by coloring individual points based
 on the density of neighboring points. This approach highlights the overall
 data distribution while preserving the visibility of individual outliers,
 making it ideal for data exploration.

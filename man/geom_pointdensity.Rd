@@ -11,6 +11,7 @@ geom_pointdensity(
   position = "identity",
   ...,
   method = c("auto", "kde2d", "neighbors"),
+  method.args = list(),
   adjust = 1,
   na.rm = FALSE,
   show.legend = NA,
@@ -96,14 +97,16 @@ lists which parameters it can accept.
 or \code{"kde2d"}.
 \itemize{
 \item \code{"auto"} (default): Selects the appropriate method based on the number of
-points.
-\code{"neighbors"} is faster for small datasets, while \code{"kde2d"} is more
+points. \code{"neighbors"} is faster for small datasets, while \code{"kde2d"} is more
 efficient for large datasets.
 \item \code{"neighbors"}: Determines an appropriate radius and counts the number of
 points within this radius for each point.
 \item \code{"kde2d"}: Uses 2D kernel density estimation via \code{\link[MASS:kde2d]{MASS::kde2d()}}.
 Additional arguments can be provided through \code{method.args}.
 }}
+
+\item{method.args}{List of additional arguments passed on to the density
+estimation function defined by \code{method} (e.g. \code{\link[MASS:kde2d]{MASS::kde2d()}}).}
 
 \item{adjust}{Multiplicative bandwidth adjustment for density estimation. A
 value less than 1 (e.g., \code{adjust = 0.5}) yields a smoother density
@@ -125,7 +128,12 @@ that define both data and aesthetics and shouldn't inherit behaviour from
 the default plot specification, e.g. \code{\link[ggplot2:borders]{borders()}}.}
 }
 \description{
-A cross between a scatter plot and a 2D density plot
+\code{geom_pointdensity()} visualizes overlapping data points on a 2D
+coordinate system. It combines the benefits of \code{\link[=geom_point]{geom_point()}},
+\code{\link[=geom_density2d]{geom_density2d()}}, and \code{\link[=geom_bin2d]{geom_bin2d()}} by coloring individual points based
+on the density of neighboring points. This approach highlights the overall
+data distribution while preserving the visibility of individual outliers,
+making it ideal for data exploration.
 }
 \section{Aesthetics}{
 
@@ -210,4 +218,11 @@ ggplot(data = dat, mapping = aes(x = x, y = y)) +
   geom_pointdensity() +
   scale_color_viridis() +
   coord_cartesian(xlim = c(-1, 3), ylim = c(-5, 15))
+}
+\seealso{
+You can find examples and demo plots at
+\url{https://github.com/LKremer/ggpointdensity}
+}
+\author{
+Lukas PM Kremer & Simon Anders
 }

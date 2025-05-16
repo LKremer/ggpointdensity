@@ -26,9 +26,10 @@ count_neighbors <- function(x, y, r2, xy) {
 #' @inherit geom_pointdensity
 #' @param geom The geometric object to use to display the data for this layer,
 #'   defaults to "point".
-#' @param method.args List of additional arguments passed on to the density
-#'   estimation function defined by `method` (e.g. [MASS::kde2d()] when
-#'   `method`==`kde2d`)
+#'
+#' @author Lukas PM Kremer & Simon Anders
+#' @seealso You can find examples and demo plots at
+#'   <https://github.com/LKremer/ggpointdensity>
 #'
 #' @export
 stat_pointdensity <- function(
@@ -177,7 +178,7 @@ StatPointdensity <- ggproto(
       iy <- findInterval(data$y, dens$y)
       ii <- cbind(ix, iy)
       data$density[finites] <- dens$z[ii]
-      data$density[!finites] <- min(dens$z)
+      data$density <- pmax(data$density, .Machine$double.eps, na.rm = TRUE)
     } else {
       if (is.character(method)) {
         method <- match.fun(method)
@@ -194,25 +195,36 @@ StatPointdensity <- ggproto(
 
 #' A cross between a scatter plot and a 2D density plot
 #'
+#' @description `geom_pointdensity()` visualizes overlapping data points on a 2D
+#'   coordinate system. It combines the benefits of [geom_point()],
+#'   [geom_density2d()], and [geom_bin2d()] by coloring individual points based
+#'   on the density of neighboring points. This approach highlights the overall
+#'   data distribution while preserving the visibility of individual outliers,
+#'   making it ideal for data exploration.
+#'
 #' @inheritParams ggplot2::geom_point
 #' @param method Density estimation method. Options are `"auto"`, `"neighbors"`,
 #'   or `"kde2d"`.
 #'
 #'   - `"auto"` (default): Selects the appropriate method based on the number of
-#'   points.
-#'   `"neighbors"` is faster for small datasets, while `"kde2d"` is more
+#'   points. `"neighbors"` is faster for small datasets, while `"kde2d"` is more
 #'   efficient for large datasets.
 #'   - `"neighbors"`: Determines an appropriate radius and counts the number of
 #'   points within this radius for each point.
 #'   - `"kde2d"`: Uses 2D kernel density estimation via [MASS::kde2d()].
 #'   Additional arguments can be provided through `method.args`.
-#'
+#' @param method.args List of additional arguments passed on to the density
+#'   estimation function defined by `method` (e.g. [MASS::kde2d()]).
 #' @param adjust Multiplicative bandwidth adjustment for density estimation. A
 #'   value less than 1 (e.g., `adjust = 0.5`) yields a smoother density
 #'   estimate, while a value greater than 1 (e.g., `adjust = 2`) increases the
 #'   level of visible detail.
 #'
 #' @inheritSection ggplot2::geom_point Aesthetics
+#'
+#' @author Lukas PM Kremer & Simon Anders
+#' @seealso You can find examples and demo plots at
+#'   <https://github.com/LKremer/ggpointdensity>
 #'
 #' @export
 #'
@@ -287,6 +299,7 @@ geom_pointdensity <- function(
   position = "identity",
   ...,
   method = c("auto", "kde2d", "neighbors"),
+  method.args = list(),
   adjust = 1,
   na.rm = FALSE,
   show.legend = NA,
@@ -303,6 +316,7 @@ geom_pointdensity <- function(
     inherit.aes = inherit.aes,
     params = list(
       method = method,
+      method.args = method.args,
       adjust = adjust,
       na.rm = na.rm,
       ...

@@ -1,10 +1,13 @@
 # ggpointdensity
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/LKremer/ggpointdensity/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/LKremer/ggpointdensity/actions/workflows/check-standard.yaml)
 [![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/ggpointdensity)](https://cran.r-project.org/package=ggpointdensity) 
 [![Downloads](https://cranlogs.r-pkg.org/badges/last-month/ggpointdensity?color=brightgreen)](https://cran.r-project.org/package=ggpointdensity)
+<!-- badges: end -->
 
 Introduces `geom_pointdensity()`: A cross between a scatter plot and a 2D density plot.
 
-<img src="img/pointdensity_logo.png" width="60%" />
+<img src="man/figures/pointdensity_logo.png" width="60%" />
 
 
 ## Installation
@@ -26,13 +29,13 @@ give you an estimate of how many points are overlapping.
 `geom_density2d()` and `geom_bin2d()` solve this issue, but they make it impossible
 to investigate individual outlier points, which may be of interest.
 
-<img src="img/scatter_dens_bin2d.png" width="100%" />
+<img src="man/figures/scatter_dens_bin2d.png" width="100%" />
 
 `geom_pointdensity()` aims to solve this problem by combining the best of both
 worlds: individual points are colored by the number of neighboring points.
 This allows you to see the overall distribution, as well as individual points.
 
-<img src="img/pointdensity.png" width="50%" />
+<img src="man/figures/pointdensity.png" width="50%" />
 
 ## Changelog
 Added `method` argument and renamed the `n_neighbor` stat to `density`. The available options
@@ -64,11 +67,9 @@ ggplot(data = dat, mapping = aes(x = x, y = y)) +
   scale_color_viridis()
 ```
 
-<img src="img/pointdensity.png" width="50%" />
+<img src="man/figures/pointdensity.png" width="50%" />
 
 Each point is colored according to the number of neighboring points.
-(Note: this here is the dev branch, where I decided to plot the density estimate
-instead of n_neighbors now.)
 The distance threshold to consider two points as neighbors (smoothing
 bandwidth) can be adjusted with the `adjust` argument, where `adjust = 0.5`
 means use half of the default bandwidth.
@@ -81,7 +82,7 @@ ggplot(data = dat, mapping = aes(x = x, y = y)) +
   geom_pointdensity(adjust = 4) +
   scale_color_viridis()
 ```
-<img src="img/pointdensity_adj.png" width="100%" />
+<img src="man/figures/pointdensity_adj.png" width="100%" />
 
 Of course you can combine the geom with standard `ggplot2` features
 such as facets...
@@ -94,7 +95,7 @@ ggplot(data = dat, mapping = aes(x = x, y = y)) +
   facet_wrap( ~ group)
 ```
 
-<img src="img/pointdensity_facet.png" width="75%" />
+<img src="man/figures/pointdensity_facet.png" width="75%" />
 
 ... or point shape and size:
 ``` r
@@ -104,7 +105,7 @@ ggplot(data = dat_subset, mapping = aes(x = x, y = y)) +
   scale_color_viridis()
 ```
 
-<img src="img/pointdensity_shape.png" width="50%" />
+<img src="man/figures/pointdensity_shape.png" width="50%" />
 
 Zooming into the axis works as well, keep in mind that `xlim()` and
 `ylim()` change the density since they remove data points.
@@ -122,7 +123,7 @@ ggplot(data = dat, mapping = aes(x = x, y = y)) +
   coord_cartesian(xlim = c(-1, 3), ylim = c(-5, 15))
 ```
 
-<img src="img/pointdensity_zoom.png" width="100%" />
+<img src="man/figures/pointdensity_zoom.png" width="100%" />
 
 ## Authors
 Lukas PM Kremer ([@LPMKremer](https://twitter.com/LPMKremer/)) and Simon Anders ([@s_anders_m](https://twitter.com/s_anders_m/)), 2019

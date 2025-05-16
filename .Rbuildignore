@@ -3,5 +3,6 @@
 ^\.github/*$
 ^ggpointdensity\.Rproj$
 ^LICENSE\.md$
-^cran-comments\.md$
-^NEWS\.md$
+^CRAN-SUBMISSION$
+^CRAN-RELEASE$
+^cran-comments.md$

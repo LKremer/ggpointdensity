@@ -303,6 +303,7 @@ geom_pointdensity <- function(
     inherit.aes = inherit.aes,
     params = list(
       method = method,
+      adjust = adjust,
       na.rm = na.rm,
       ...
     )

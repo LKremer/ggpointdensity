@@ -2,3 +2,5 @@
 ^\.Rproj\.user$
 ^ggpointdensity\.Rproj$
 ^LICENSE\.md$
+^cran-comments\.md$
+^NEWS\.md$

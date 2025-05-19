@@ -116,5 +116,57 @@ ggplot(data = dat, mapping = aes(x = x, y = y)) +
 
 <img src="man/figures/pointdensity_zoom.png" width="100%" />
 
+### Advanced usage
+
+You can re-use or modify the density estimates using ggplot2's `after_stat()` function.
+
+For instance, let's say you want to plot the density estimates on a *relative* instead of an absolute scale, i.e. scaled from 0 to 1.
+Of course this can be achieved by dividing the absolute density values by the maximum, but how do you access the density estimates on R code?
+The short answer is to use `after_stat(density)` inside an aesthetics mapping like so:
+
+```r
+ggplot(data = dat,
+       aes(x = x, y = y, color = after_stat(density / max(density)))) +
+  geom_pointdensity(size = .3) +
+  scale_color_viridis() +
+  labs(color = "relative\ndensity")
+```
+<img src="man/figures/pointdensity_relative.png" width="50%" />
+
+For a more in-depth explanation on `after_stat()`, check out [the relevant ggplot documentation](https://ggplot2.tidyverse.org/reference/aes_eval.html).
+
+Since plotting the relative density is a common use-case, we provide a little shortcut.
+Instead of the solution above you can simply use `after_stat(ndensity)`.
+This is especially useful when facetting data, since sometimes you want to inspect the point density separately for each facet:
+
+```r
+ggplot(data = dat,
+       aes( x = x, y = y, color = after_stat(ndensity))) +
+  geom_pointdensity( size = .25) +
+  scale_color_viridis() +
+  facet_wrap( ~ group) +
+  labs(color = "relative\ndensity")
+```
+
+<img src="man/figures/pointdensity_facet_relative.png" width="75%" />
+
+Even though the `foo` data group is not as dense as `bar` overall, this plot uses the whole color scale between 0 and 1 in both facets.
+
+
+Lastly, you can use `after_stat()` to affect other plot aesthetics such as point size:
+
+```r
+ggplot(data = dat,
+       aes(x = x, y = y, size = after_stat(1 / density ^ 1.8))) +
+  geom_pointdensity(adjust = .2) +
+  scale_color_viridis() +
+  scale_size_continuous(range = c(.001, 3))
+```
+
+<img src="man/figures/pointdensity_custom.png" width="75%" />
+
+Here the point size is proportional to `1 / density ^ 1.8`.
+
+
 ## Authors
 Lukas PM Kremer ([@LPMKremer](https://twitter.com/LPMKremer/)) and Simon Anders ([@s_anders_m](https://twitter.com/s_anders_m/)), 2019

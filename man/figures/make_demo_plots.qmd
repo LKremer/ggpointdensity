@@ -236,9 +236,9 @@ ggsave(here("man/figures/pointdensity_shape.png"),
 
 ```{r}
 dat %>%
-  ggplot(aes(x = x, y = y, size = 1 / after_stat(density)^1.8)) +
+  ggplot(aes(x = x, y = y, size = after_stat(1 / density ^ 1.8))) +
   geom_pointdensity(adjust = .2) +
-  scale_color_viridis(option = "inferno", end = .9, direction = -1) +
+  scale_color_viridis() +
   scale_size_continuous(range = c(.001, 3))
 
 ggsave(here("man/figures/pointdensity_custom.png"),

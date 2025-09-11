@@ -1,0 +1,201 @@
+---
+title: "ggpointdensity"
+output:
+  github_document
+editor_options:
+  chunk_output_type: inline
+---
+```{r, setup, include=FALSE}
+knitr::opts_chunk$set(
+  comment = '', fig.width = 8, fig.height = 4, out.width = "100%", dpi=300
+)
+```
+
+[![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/ggpointdensity)](https://cran.r-project.org/package=ggpointdensity) 
+[![Downloads](https://cranlogs.r-pkg.org/badges/last-month/ggpointdensity?color=brightgreen)](https://cran.r-project.org/package=ggpointdensity)
+
+Introduces `geom_pointdensity()`: A cross between a scatter plot and a 2D density plot.
+```{r, include = FALSE}
+library(tidyverse)
+library(viridis)
+library(ggpointdensity)
+library(patchwork)
+theme_set(theme_minimal())
+```
+
+```{r generate-toy-data, include = FALSE}
+dat <- bind_rows(
+  tibble(x = rnorm(7000, sd = 1),
+         y = rnorm(7000, sd = 10),
+         group = "foo"),
+  tibble(x = rnorm(3000, mean = 1, sd = .5),
+         y = rnorm(3000, mean = 7, sd = 5),
+         group = "bar"))
+```
+
+```{r logo, echo =FALSE, fig.width=2.5, fig.height=2.5 , out.width="60%"}
+dat %>%
+  ggplot(aes(x = x, y = y)) +
+  geom_pointdensity(size = .3) +
+  scale_color_viridis() +
+  labs(title="geom_pointdensity()") +
+  theme_void() +
+  theme(plot.title = element_text(hjust = 0.5),
+        legend.position = "none", aspect.ratio=1)
+```
+```{r, eval=FALSE, echo=FALSE}
+dat %>%
+  ggplot( aes( x = x, y = y, color = group)) +
+  geom_point( size = .5)
+```
+
+## Installation
+To install the package, type this command in R:
+```{r, eval = FALSE}
+install.packages("ggpointdensity")
+
+# Alternatively, you can install the latest
+# development version from GitHub:
+if (!requireNamespace("remotes", quietly = TRUE))
+    install.packages("remotes")
+remotes::install_github("LKremer/ggpointdensity")
+```
+
+## Motivation
+There are several ways to visualize data points on a 2D coordinate system:
+If you have lots of data points on top of each other, `geom_point()` fails to
+give you an estimate of how many points are overlapping.
+`geom_density2d()` and `geom_bin2d()` solve this issue, but they make it impossible
+to investigate individual outlier points, which may be of interest.
+
+```{r, echo=FALSE, fig.width=10, fig.height=4}
+dat %>%
+  ggplot( aes( x = x, y = y)) +
+  geom_point( size = .3) +
+  labs(title="geom_point()") +
+
+dat %>%
+  ggplot( aes( x = x, y = y, fill = after_stat(level))) +
+  stat_density_2d(geom = "polygon") +
+  scale_fill_viridis() +
+  labs(title="stat_density2d(geom='polygon')") +
+
+dat %>%
+  ggplot( aes( x = x, y = y)) +
+  geom_bin2d() +
+  scale_fill_viridis() +
+  labs(title="geom_bin2d()") &
+
+  theme(plot.title = element_text(hjust = 0.5), aspect.ratio = 1)
+```
+
+`geom_pointdensity()` aims to solve this problem by combining the best of both
+worlds: individual points are colored by the number of neighboring points.
+This allows you to see the overall distribution, as well as individual points.
+
+```{r, echo = FALSE}
+dat %>%
+  ggplot(aes(x = x, y = y)) +
+  geom_pointdensity(size = .3) +
+  scale_color_viridis() +
+  labs(title="geom_pointdensity()") +
+  theme(plot.title = element_text(hjust = 0.5), aspect.ratio=1)
+```
+
+## Changelog
+Added `method` argument and renamed the `n_neighbor` stat to `density`. The available options
+are `method="auto"`,
+`method="default"` and `method="kde2d"`. `default` is the regular n_neighbor calculation
+as in the CRAN package. `kde2d` uses 2D kernel density estimation to estimate the point density
+(credits to @slowkow).
+This method is slower for few points, but faster for many (ca. >20k) points. By default,
+`method="auto"` picks either `kde2d` or `default` depending on the number of points.
+
+## Demo
+Generate some toy data and visualize it with `geom_pointdensity()`:
+```{r simple, include=TRUE, eval=TRUE, echo=TRUE}
+<<generate-toy-data>>
+
+ggplot(data = dat, mapping = aes( x = x, y = y)) +
+  geom_pointdensity() +
+  scale_color_viridis() +
+  theme(aspect.ratio=1)
+```
+
+
+Each point is colored according to the number of neighboring points.
+(Note: this here is the dev branch, where I decided to plot the density estimate
+instead of n_neighbors now.)
+The distance threshold to consider two points as neighbors (smoothing
+bandwidth) can be adjusted with the `adjust` argument, where `adjust = 0.5`
+means use half of the default bandwidth.
+```{r adjusting-the-bandwidth, fig.width=4, fig.height=3, out.width="45%", fig.show="hold"}
+ggplot(data = dat, mapping = aes(x = x, y = y)) +
+  geom_pointdensity(size = .3, adjust = .1) +
+  scale_color_viridis() +
+  labs(title="adjust = 0.1") +
+  theme(plot.title = element_text(hjust = 0.5), aspect.ratio=1)
+
+ggplot(data = dat, mapping = aes(x = x, y = y)) +
+  geom_pointdensity(size = .3, adjust = 4, aspect.ratio=1) +
+  scale_color_viridis() +
+  labs(title="adjust = 4") +
+  theme(plot.title = element_text(hjust = 0.5), aspect.ratio=1)
+```
+
+Of course you can combine the geom with standard `ggplot2` features
+such as facets...
+
+```{r facets}
+dat %>%
+  ggplot( aes( x = x, y = y)) +
+  geom_pointdensity(aes(color=after_stat(ndensity)), size = .25) +
+  scale_color_viridis() +
+  facet_wrap( ~ group) +
+  labs(title="facet_wrap( ~ group)") +
+  theme(plot.title = element_text(hjust = 0.5), aspect.ratio=1)
+```
+
+... or point shape and size:
+```{r different-shapes}
+dat_subset <- sample_frac(dat, .1)  # smaller data set
+ggplot(data = dat_subset, mapping = aes(x = x, y = y)) +
+  geom_pointdensity(size = 3, shape = 17) +
+  scale_color_viridis() +
+  labs(title="changing shape") +
+  theme(plot.title = element_text(hjust = 0.5), aspect.ratio = 1)
+```
+
+Zooming into the axis works as well, keep in mind that `xlim()` and
+`ylim()` change the density since they remove data points.
+It may be better to use `coord_cartesian()` instead.
+
+```{r zooming}
+dat %>%
+  ggplot(aes(x = x, y = y)) +
+  geom_pointdensity(size = .5) +
+  scale_color_viridis() +
+  scale_x_continuous(limits = c(-1, 3)) +
+  scale_y_continuous(limits = c(-5, 15)) +
+  labs(title="using x- and ylim()") +
+
+dat %>%
+  ggplot(aes(x = x, y = y)) +
+  geom_pointdensity(size = .5) +
+  scale_color_viridis() +
+  coord_cartesian(xlim = c(-1, 3), ylim = c(-5, 15)) +
+  labs(title="using coord_cartesian()") &
+  theme(aspect.ratio = 1, plot.title = element_text(hjust = 0.5))
+```
+
+```{r propotional-ink, eval=FALSE, echo = FALSE}
+dat %>%
+  ggplot(aes(x = x, y = y, size = after_stat(1/density), color = after_stat(density))) +
+  geom_pointdensity(adjust = .2) +
+  scale_color_viridis(option = "inferno", end = .9, direction = -1) +
+  scale_size_area(max_size = 3) +
+  theme(aspect.ratio = 1)
+```
+
+## Authors
+Lukas PM Kremer ([@LPMKremer](https://twitter.com/LPMKremer/)) and Simon Anders ([@s_anders_m](https://twitter.com/s_anders_m/)), 2019

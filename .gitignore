@@ -3,4 +3,7 @@
 .Rhistory
 .RData
 .Ruserdata
+tests/testthat/Rplots.pdf
+*.o
+*.so
 CRAN-SUBMISSION

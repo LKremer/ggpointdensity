@@ -1,5 +1,7 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^README\.Rmd$
+^README_files$
 ^\.github/*$
 ^ggpointdensity\.Rproj$
 ^LICENSE\.md$

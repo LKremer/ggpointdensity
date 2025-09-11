@@ -81,9 +81,14 @@ default plot specification, e.g. \code{\link[=borders]{borders()}}.}
 layer, as a string.}
 }
 \description{
-The pointdensity geom is used to create scatterplots where each point is
-colored by the number of neighboring points. This is useful to visualize the
-2D-distribution of points in case of overplotting.
+\code{geom_pointdensity()} visualizes overlapping data points on a 2D
+coordinate system. It combines the benefits of
+\code{\link[ggplot2:geom_point]{geom_point()}},
+\code{\link[ggplot2:geom_density_2d]{geom_density2d()}}, and
+\code{\link[ggplot2:geom_bin_2d]{geom_bin2d()}} by coloring individual points based
+on the density of neighboring points. This approach highlights the overall
+data distribution while preserving the visibility of individual outliers,
+making it ideal for data exploration.
 }
 \examples{
 

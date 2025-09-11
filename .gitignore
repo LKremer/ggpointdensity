@@ -1,3 +1,4 @@
+.DS_Store
 .Rproj.user
 .Rhistory
 .RData
@@ -5,3 +6,4 @@
 tests/testthat/Rplots.pdf
 *.o
 *.so
+CRAN-SUBMISSION

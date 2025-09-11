@@ -1,17 +1,27 @@
-#' @import ggplot2
-
-
+#' Count Neighbors within a Radius
+#'
+#' This function counts the number of neighboring points within a specified
+#' radius for each point in a given set of coordinates using a C implementation.
+#'
+#' @param x A numeric vector of x-coordinates of the points.
+#' @param y A numeric vector of y-coordinates of the points.
+#' @param r2 A numeric value representing the squared radius within which to
+#'   search for neighboring points.
+#' @param xy A numeric value representing the aspect ratio (usually the ratio of
+#'   the y-scale to the x-scale).
+#' @return A numeric vector where each element represents the count of
+#'   neighboring points within the specified radius for each point.
 count_neighbors <- function(x, y, r2, xy) {
   .Call("count_neighbors_", x, y, r2, xy, "ggpointdensity")
 }
 
-#' Implementation of count_neighbors in R. Not actually used, just for clarity
-count_neighbors_r <- function(x, y, r2, xy) {
-  yx <- 1 / xy
-  sapply(1:length(x), function(i) {
-    sum((yx * (x[i] - x) ^ 2) + (xy * (y[i] - y) ^ 2) < r2)
-  })
-}
+# Equivalent R code for reference:
+# count_neighbors_r <- function(x, y, r2, xy) {
+#   yx <- 1 / xy
+#   sapply(1:length(x), function(i) {
+#     sum((yx * (x[i] - x)^2) + (xy * (y[i] - y)^2) < r2)
+#   })
+# }
 
 
 #' Wraps the user supplied Geom (typically GeomPoint) to add class "check_aspect_grob" and information about the aspect ratio assumed under which the densities were calculated to the grobs it draws
@@ -20,7 +30,13 @@ count_neighbors_r <- function(x, y, r2, xy) {
 addCheckToGeom <- function(orig_geom, expected_aspect_ratio = 1) {
   if (is.null(orig_geom))
     cli::cli_abort("Can't create layer without a geom.", call = rlang::caller_env())
-  OrigGeom <- ggplot2:::check_subclass(orig_geom, "Geom", env = parent.frame(n = 2), call = parent.frame(n = 2))
+  validate_subclass <- get0(
+    "validate_subclass",
+    envir = asNamespace("ggplot2"),
+    inherits = FALSE,
+    ifnotfound = get0("check_subclass", envir = asNamespace("ggplot2"))
+  ) # safe for ggplot 4
+  OrigGeom <- validate_subclass(orig_geom, "Geom", env = parent.frame(n = 2), call = parent.frame(n = 2))
   expected_aspect_ratio <- expected_aspect_ratio %||% 1
   GeomWithCheck <-
     ggproto(
@@ -50,19 +66,22 @@ addCheckToGeom <- function(orig_geom, expected_aspect_ratio = 1) {
 
 #' @rdname geom_pointdensity
 #' @export
-stat_pointdensity <- function(mapping = NULL,
-                              data = NULL,
-                              geom = "point",
-                              position = "identity",
-                              ...,
-                              adjust = 1,
-                              aspect.ratio = ggplot2::theme_get()$aspect.ratio,
-                              na.rm = FALSE,
-                              method = "auto",
-                              method.args = list(),
-                              show.legend = NA,
-                              inherit.aes = TRUE) {
+stat_pointdensity <- function(
+  mapping = NULL,
+  data = NULL,
+  geom = "point",
+  position = "identity",
+  ...,
+  adjust = 1,
+  aspect.ratio = ggplot2::theme_get()$aspect.ratio,
+  na.rm = FALSE,
+  method = "auto",
+  method.args = list(),
+  show.legend = NA,
+  inherit.aes = TRUE
+) {
   GeomWithCheck <- addCheckToGeom(geom, expected_aspect_ratio = aspect.ratio)
+
   layer(
     data = data,
     mapping = mapping,
@@ -121,11 +140,11 @@ makeContext.check_aspect_grob <- function(x) {
 #' @format NULL
 #' @usage NULL
 #' @export
-StatPointdensity <- ggproto("StatPointdensity", Stat,
-  default_aes = aes(color = after_stat(density)),
+StatPointdensity <- ggplot2::ggproto("StatPointdensity", ggplot2::Stat,
+  default_aes = ggplot2::aes(color = after_stat(density)),
   required_aes = c("x", "y"),
 
-  extra_params = c("aspect.ratio", Stat$extra_params),
+  extra_params = c("aspect.ratio", ggplot2::Stat$extra_params),
 
   compute_layer = function(self, data, params, layout) {
     # This function mostly copied from ggplot2's Stat
@@ -142,7 +161,9 @@ StatPointdensity <- ggproto("StatPointdensity", Stat,
       unlist(strsplit(self$required_aes, "|", fixed = TRUE))
     )
 
-    data <- ggplot2:::remove_missing(data, params$na.rm,
+    data <- ggplot2:::remove_missing(
+      data,
+      params$na.rm,
       c(required_aes, self$non_missing_aes),
       ggplot2:::snake_class(self),
       finite = FALSE # Note that in ggplot2's Stat this is TRUE
@@ -172,8 +193,16 @@ StatPointdensity <- ggproto("StatPointdensity", Stat,
     params
   },
 
-  compute_group = function(data, scales, adjust = 1, method = "auto",
-                           method.args = list(), ..., aspect.ratio = NULL, coord) {
+  compute_group = function(
+    data,
+    scales,
+    adjust = 1,
+    method = "auto",
+    method.args = list(),
+    ...,
+    aspect.ratio = NULL,
+    coord
+  ) {
     scale_views <- coord$setup_panel_params(scales$x, scales$y)
     dx <- diff(xrange <- scale_views$x.range)
     dy <- diff(yrange <- scale_views$y.range)
@@ -240,28 +269,29 @@ StatPointdensity <- ggproto("StatPointdensity", Stat,
       data$density[finites] <- dens$z[ii]
       data$density[!finites] <- min(dens$z)
     } else {
-
       if (is.character(method)) {
         method <- match.fun(method)
       }
       data$density <- do.call(method, c(method.args))
-
     }
 
 
-    data$ndensity <- data$density/max(data$density)
+    data$ndensity <- data$density / max(data$density)
 
     data
   }
 )
 
-
 #' A cross between a scatter plot and a 2D density plot
 #'
-#' The pointdensity geom is used to create scatterplots where each point is
-#' colored by the number of neighboring points. This is useful to visualize the
-#' 2D-distribution of points in case of overplotting.
-#'
+#' @description `geom_pointdensity()` visualizes overlapping data points on a 2D
+#'   coordinate system. It combines the benefits of
+#'   [`geom_point()`][ggplot2::geom_point()],
+#'   [`geom_density2d()`][ggplot2::geom_density2d()], and
+#'   [`geom_bin2d()`][ggplot2::geom_bin2d()] by coloring individual points based
+#'   on the density of neighboring points. This approach highlights the overall
+#'   data distribution while preserving the visibility of individual outliers,
+#'   making it ideal for data exploration.
 #'
 #' @aliases geom_pointdensity stat_pointdensity StatPointdensity
 #' @param mapping Set of aesthetic mappings created by
@@ -383,7 +413,6 @@ geom_pointdensity <- function(mapping = NULL,
                               show.legend = NA,
                               inherit.aes = TRUE) {
   GeomPointWithCheck <- addCheckToGeom(ggplot2::GeomPoint, expected_aspect_ratio = aspect.ratio)
-
   ggplot2::layer(
     data = data,
     mapping = mapping,

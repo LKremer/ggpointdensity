@@ -129,7 +129,7 @@ instead of n_neighbors now.)
 The distance threshold to consider two points as neighbors (smoothing
 bandwidth) can be adjusted with the `adjust` argument, where `adjust = 0.5`
 means use half of the default bandwidth.
-```{r adjusting the bandwidth, fig.width=4, fig.height=3, out.width="45%", fig.show="hold"}
+```{r adjusting-the-bandwidth, fig.width=4, fig.height=3, out.width="45%", fig.show="hold"}
 ggplot(data = dat, mapping = aes(x = x, y = y)) +
   geom_pointdensity(size = .3, adjust = .1) +
   scale_color_viridis() +
@@ -157,7 +157,7 @@ dat %>%
 ```
 
 ... or point shape and size:
-```{r different shapes}
+```{r different-shapes}
 dat_subset <- sample_frac(dat, .1)  # smaller data set
 ggplot(data = dat_subset, mapping = aes(x = x, y = y)) +
   geom_pointdensity(size = 3, shape = 17) +
@@ -188,7 +188,7 @@ dat %>%
   theme(aspect.ratio = 1, plot.title = element_text(hjust = 0.5))
 ```
 
-```{r propotional ink, eval=FALSE, echo = FALSE}
+```{r propotional-ink, eval=FALSE, echo = FALSE}
 dat %>%
   ggplot(aes(x = x, y = y, size = after_stat(1/density), color = after_stat(density))) +
   geom_pointdensity(adjust = .2) +

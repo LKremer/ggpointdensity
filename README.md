@@ -32,6 +32,8 @@ overlapping. `geom_density2d()` and `geom_bin2d()` solve this issue, but
 they make it impossible to investigate individual outlier points, which
 may be of interest.
 
+    `stat_bin2d()` using `bins = 30`. Pick better value `binwidth`.
+
 <img src="README_files/figure-gfm/unnamed-chunk-4-1.png" width="100%" />
 
 `geom_pointdensity()` aims to solve this problem by combining the best
@@ -94,7 +96,7 @@ ggplot(data = dat, mapping = aes(x = x, y = y)) +
   theme(plot.title = element_text(hjust = 0.5), aspect.ratio=1)
 ```
 
-<img src="README_files/figure-gfm/adjusting the bandwidth-1.png" width="45%" /><img src="README_files/figure-gfm/adjusting the bandwidth-2.png" width="45%" />
+<img src="README_files/figure-gfm/adjusting-the-bandwidth-1.png" width="45%" /><img src="README_files/figure-gfm/adjusting-the-bandwidth-2.png" width="45%" />
 
 Of course you can combine the geom with standard `ggplot2` features such
 as facets…
@@ -122,7 +124,7 @@ ggplot(data = dat_subset, mapping = aes(x = x, y = y)) +
   theme(plot.title = element_text(hjust = 0.5), aspect.ratio = 1)
 ```
 
-<img src="README_files/figure-gfm/different shapes-1.png" width="100%" />
+<img src="README_files/figure-gfm/different-shapes-1.png" width="100%" />
 
 Zooming into the axis works as well, keep in mind that `xlim()` and
 `ylim()` change the density since they remove data points. It may be
@@ -146,7 +148,7 @@ dat %>%
   theme(aspect.ratio = 1, plot.title = element_text(hjust = 0.5))
 ```
 
-    Warning: Removed 3528 rows containing missing values or values outside the scale range
+    Warning: Removed 3515 rows containing missing values or values outside the scale range
     (`stat_pointdensity()`).
 
 <img src="README_files/figure-gfm/zooming-1.png" width="100%" />

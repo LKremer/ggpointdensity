@@ -1,5 +1,7 @@
 # ggpointdensity 0.2.1
 
+* Fixed failed tests due to ggplot2 update
+
 # ggpointdensity 0.2.0
 
 * Added an alternative method for density estimation: MASS::kde2d()

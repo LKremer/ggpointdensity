@@ -169,4 +169,4 @@ Here the point size is proportional to `1 / density ^ 1.8`.
 
 
 ## Authors
-Lukas PM Kremer ([@LPMKremer](https://x.com/LPMKremer/)) and Simon Anders ([@s_anders_m](https://x.com/s_anders_m/)), 2019
+Lukas PM Kremer and Simon Anders, 2019

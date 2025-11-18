@@ -3,4 +3,6 @@
 export(geom_pointdensity)
 export(stat_pointdensity)
 import(ggplot2)
+importFrom(MASS,bandwidth.nrd)
+importFrom(MASS,kde2d)
 useDynLib(ggpointdensity, count_neighbors_, .registration = TRUE)

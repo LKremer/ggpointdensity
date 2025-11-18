@@ -17,7 +17,8 @@ RoxygenNote: 7.3.2
 Depends:
     R (>= 3.2)
 Imports:
-    ggplot2
+    ggplot2,
+    MASS
 Suggests:
     viridis,
     dplyr,

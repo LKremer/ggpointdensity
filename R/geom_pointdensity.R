@@ -237,11 +237,11 @@ StatPointdensity <- ggproto(
 #'
 #' # generate some toy data
 #' dat <- bind_rows(
-#'   tibble(x = rnorm(7000, sd = 1),
-#'          y = rnorm(7000, sd = 10),
+#'   tibble(x = rnorm(3500, sd = 1),
+#'          y = rnorm(3500, sd = 10),
 #'          group = "foo"),
-#'   tibble(x = rnorm(3000, mean = 1, sd = .5),
-#'          y = rnorm(3000, mean = 7, sd = 5),
+#'   tibble(x = rnorm(1500, mean = 1, sd = .5),
+#'          y = rnorm(1500, mean = 7, sd = 5),
 #'          group = "bar"))
 #'
 #' # plot it with geom_pointdensity()

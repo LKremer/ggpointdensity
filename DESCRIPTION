@@ -1,7 +1,7 @@
 Package: ggpointdensity
 Type: Package
 Title: A Cross Between a 2D Density Plot and a Scatter Plot
-Version: 0.2.0.9000
+Version: 0.2.1
 Authors@R: c(person("Lukas P. M.", "Kremer", email = "L-Kremer@web.de", role = c("aut", "cre"), comment = c(ORCID = "0000-0003-3170-6295")),
     person("Simon", "Anders", role = "ctb", comment = c(ORCID = "0000-0003-4868-1805")))
 Description: A cross between a 2D density plot and a scatter plot,

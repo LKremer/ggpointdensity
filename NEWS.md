@@ -1,4 +1,4 @@
-# ggpointdensity (development version)
+# ggpointdensity 0.2.1
 
 # ggpointdensity 0.2.0
 

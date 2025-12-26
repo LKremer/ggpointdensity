@@ -39,6 +39,7 @@ stat_pointdensity <- function(
   position = "identity",
   ...,
   adjust = 1,
+  reorder = TRUE,
   na.rm = FALSE,
   method = c("auto", "kde2d", "neighbors"),
   method.args = list(),
@@ -56,6 +57,7 @@ stat_pointdensity <- function(
     inherit.aes = inherit.aes,
     params = list(
       adjust = adjust,
+      reorder = reorder,
       na.rm = na.rm,
       method = method,
       method.args = method.args,
@@ -132,6 +134,7 @@ StatPointdensity <- ggproto(
     scales,
     adjust = 1,
     method = "auto",
+    reorder = TRUE,
     method.args = list()
   ) {
     finites <- is.finite(data$x) & is.finite(data$y)
@@ -188,6 +191,11 @@ StatPointdensity <- ggproto(
 
     data$ndensity <- data$density / max(data$density)
 
+    # by default, sort points by density to make the plot look nicer (issue #15)
+    if (reorder) {
+      data <- sort_by(data, ~list(density))
+    }
+
     data
   }
 )
@@ -221,6 +229,8 @@ StatPointdensity <- ggproto(
 #'   value less than 1 (e.g., `adjust = 0.1`) yields a smoother density
 #'   estimate, while a value greater than 1 (e.g., `adjust = 5`) increases the
 #'   level of visible detail.
+#' @param reorder If `TRUE`, the default, points are reordered by density so
+#'   that points in dense regions are plotted on top.
 #'
 #' @inheritSection ggplot2::geom_point Aesthetics
 #'
@@ -303,6 +313,7 @@ geom_pointdensity <- function(
   method = c("auto", "kde2d", "neighbors"),
   method.args = list(),
   adjust = 1,
+  reorder = TRUE,
   na.rm = FALSE,
   show.legend = NA,
   inherit.aes = TRUE
@@ -320,6 +331,7 @@ geom_pointdensity <- function(
       method = method,
       method.args = method.args,
       adjust = adjust,
+      reorder = reorder,
       na.rm = na.rm,
       ...
     )

@@ -115,3 +115,9 @@ for (method in c("neighbors", "kde2d")) {
   )
 }
 
+test_that("'reorder = TRUE' correctly reorders points by density", {
+  p1 <- ggplot(df, aes(x, y)) +
+    geom_pointdensity(reorder = TRUE)
+  d <- ggplot2::ggplot_build(p1)$data[[1]]$ndensity
+  expect_true(all(diff(d) >= 0))
+})

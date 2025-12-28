@@ -14,7 +14,8 @@ test_that("coord_fixed adjusts density correctly (method='kde2d')", {
 
   p1 <-
     ggplot(df, aes(x, y, label = idx)) +
-    stat_pointdensity(method = "kde2d", size = 20, geom = "text") +
+    stat_pointdensity(method = "kde2d", size = 20,
+                      geom = "text", reorder = FALSE) +
     coord_fixed()
   plot_data <- ggplot2::ggplot_build(p1)$data[[1]]
   expect_lt(plot_data$ndensity[1], plot_data$ndensity[2])
@@ -22,17 +23,17 @@ test_that("coord_fixed adjusts density correctly (method='kde2d')", {
 
   p1 <-
     ggplot(df, aes(x, y)) +
-    geom_pointdensity(method = "kde2d", size = 20) +
+    geom_pointdensity(method = "kde2d", size = 20, reorder = FALSE) +
     coord_fixed(ratio = 1 / 10)
-  p1
+
   plot_data <- ggplot2::ggplot_build(p1)$data[[1]]
   expect_equal(plot_data$ndensity[1], plot_data$ndensity[3])
 
   p1 <-
     ggplot(df, aes(x * 3, y)) +
-    geom_pointdensity(method = "kde2d", size = 20) +
+    geom_pointdensity(method = "kde2d", size = 20, reorder = FALSE) +
     coord_fixed(ratio = 3 / 10)
-  p1
+
   plot_data <- ggplot2::ggplot_build(p1)$data[[1]]
   expect_lt(plot_data$ndensity[1], plot_data$ndensity[2])
   expect_equal(plot_data$ndensity[1], plot_data$ndensity[3])
@@ -60,7 +61,6 @@ for (method in c("neighbors", "kde2d")) {
       p1 <- ggplot(df, aes(x, y)) +
         geom_pointdensity(method = method) +
         coord_fixed()
-      p1
       expect_no_warning(print(p1))
     }
   )
@@ -75,7 +75,6 @@ for (method in c("neighbors", "kde2d")) {
       p1 <- ggplot(df, aes(0 * x, y)) +
         geom_pointdensity(method = method) +
         coord_fixed()
-      p1
       expect_no_warning(print(p1))
     }
   )
@@ -90,7 +89,6 @@ for (method in c("neighbors", "kde2d")) {
       p1 <- ggplot(df, aes(0 * x, 0 * y)) +
         geom_pointdensity(method = method) +
         coord_fixed()
-      p1
       expect_no_warning(print(p1))
     }
   )
@@ -116,3 +114,4 @@ for (method in c("neighbors", "kde2d")) {
     }
   )
 }
+

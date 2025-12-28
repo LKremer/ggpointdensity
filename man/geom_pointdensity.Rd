@@ -13,6 +13,7 @@ geom_pointdensity(
   method = c("auto", "kde2d", "neighbors"),
   method.args = list(),
   adjust = 1,
+  reorder = TRUE,
   na.rm = FALSE,
   show.legend = NA,
   inherit.aes = TRUE
@@ -112,6 +113,9 @@ estimation function defined by \code{method} (e.g. \code{\link[MASS:kde2d]{MASS:
 value less than 1 (e.g., \code{adjust = 0.1}) yields a smoother density
 estimate, while a value greater than 1 (e.g., \code{adjust = 5}) increases the
 level of visible detail.}
+
+\item{reorder}{If \code{TRUE}, the default, points are reordered by density so
+that points in dense regions are plotted on top.}
 
 \item{na.rm}{If \code{FALSE}, the default, missing values are removed with
 a warning. If \code{TRUE}, missing values are silently removed.}
